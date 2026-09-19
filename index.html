@@ -35,7 +35,7 @@
 </head>
 <body class="bg-portalBg text-slate-200 min-h-screen flex flex-col font-sans antialiased pb-20 md:pb-0">
 
-  <!-- ÜST BİLİM BİLGİ BANDI -->
+  <!-- ÜST BİLGİ BANDI -->
   <div class="bg-surfaceDark/90 border-b border-borderSlate text-xs py-1.5 px-4 hidden md:block">
     <div class="max-w-7xl mx-auto flex items-center justify-between text-slate-400">
       <div class="flex items-center gap-4">
@@ -52,7 +52,7 @@
     </div>
   </div>
 
-  <!-- ANA HEADER -->
+  <!-- HEADER -->
   <header class="bg-surfaceDark border-b border-borderSlate sticky top-0 z-40 backdrop-blur-md">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
       
@@ -69,13 +69,13 @@
         </div>
       </div>
 
-      <!-- Arama Barı -->
+      <!-- Arama -->
       <div class="relative flex-1 max-w-md hidden md:block">
         <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500"></i>
         <input type="text" id="global-search" oninput="handleSearch()" placeholder="Bilimsel makale, yazar, doçent veya konu ara..." class="w-full bg-surfaceCard border border-borderSlate rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-bmGold transition">
       </div>
 
-      <!-- Sağ Aksiyon Butonları -->
+      <!-- Aksiyonlar -->
       <div class="flex items-center gap-2.5">
         <button id="pwa-install-btn" class="hidden items-center gap-1.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-black text-xs font-bold px-3 py-2 rounded-xl shadow-md transition">
           <i data-lucide="download" class="w-3.5 h-3.5"></i> <span>Uygulamayı İndir</span>
@@ -89,30 +89,86 @@
       </div>
     </div>
 
-    <!-- Kategori Barı -->
+    <!-- Kategoriler -->
     <div class="bg-portalBg border-t border-borderSlate px-4 overflow-x-auto hide-scrollbar">
       <div class="max-w-7xl mx-auto flex items-center gap-2 py-2 text-xs font-semibold">
-        <button onclick="setFilter('all')" class="cat-pill px-3 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 whitespace-nowrap">Tümü</button>
-        <button onclick="setFilter('makale')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap flex items-center gap-1.5">
+        <button onclick="goHome(); setFilter('all')" class="cat-pill px-3 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 whitespace-nowrap">Tümü</button>
+        <button onclick="goHome(); setFilter('makale')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap flex items-center gap-1.5">
           <i data-lucide="book-open" class="w-3.5 h-3.5 text-bmGold"></i> Makaleler
         </button>
-        <button onclick="setFilter('blog')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap">Bloglar</button>
-        <button onclick="setFilter('soru')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap">Soru & Cevap</button>
-        <button onclick="setFilter('podcast')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap flex items-center gap-1">
+        <button onclick="goHome(); setFilter('blog')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap">Bloglar</button>
+        <button onclick="goHome(); setFilter('soru')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap">Soru & Cevap</button>
+        <button onclick="goHome(); setFilter('podcast')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap flex items-center gap-1">
           <i data-lucide="mic" class="w-3.5 h-3.5 text-purple-400"></i> Podcast
         </button>
-        <span class="text-slate-600">|</span>
-        <button onclick="filterByTag('Evrim')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-400 whitespace-nowrap">🧬 Evrim</button>
-        <button onclick="filterByTag('Astrofizik')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-400 whitespace-nowrap">🌌 Astrofizik</button>
-        <button onclick="filterByTag('Yapay Zeka')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-400 whitespace-nowrap">🤖 Yapay Zekâ</button>
       </div>
     </div>
   </header>
 
-  <!-- GÖVDE -->
+  <!-- ANA KAPSAYICI -->
   <div class="max-w-7xl mx-auto px-4 py-6 w-full flex-1">
-    
-    <!-- PROFİL SAYFASI -->
+
+    <!-- 1. MAKALE OKUMA SAYFASI (TAM DETAY) -->
+    <div id="article-reader-view" class="hidden max-w-4xl mx-auto space-y-6">
+      <button onclick="goHome()" class="flex items-center gap-2 text-xs text-bmGold font-bold hover:underline">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Geri Dön (Akış)
+      </button>
+
+      <article class="bg-surfaceDark border border-borderSlate rounded-3xl overflow-hidden shadow-2xl">
+        <!-- Büyük Kapak Görseli -->
+        <div class="relative h-64 sm:h-96 w-full bg-slate-950">
+          <img id="reader-image" src="" alt="Kapak" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-surfaceDark via-transparent to-transparent"></div>
+          <span id="reader-badge" class="absolute top-4 left-4 text-xs font-extrabold uppercase px-3 py-1.5 rounded-full border backdrop-blur-md"></span>
+        </div>
+
+        <div class="p-6 sm:p-10 space-y-6">
+          <!-- Başlık -->
+          <h1 id="reader-title" class="text-2xl sm:text-4xl font-black text-white leading-tight"></h1>
+
+          <!-- Yazar ve Meta Bilgileri -->
+          <div class="flex flex-wrap items-center justify-between gap-4 py-4 border-y border-borderSlate text-xs">
+            <div id="reader-author-box" class="flex items-center gap-3 cursor-pointer group">
+              <div id="reader-author-avatar" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-blue-600 text-white font-bold flex items-center justify-center text-sm shadow-md">
+                --
+              </div>
+              <div>
+                <p id="reader-author-name" class="font-bold text-slate-100 group-hover:text-bmGold transition text-sm"></p>
+                <p id="reader-author-role" class="text-[11px] text-bmGold font-semibold"></p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 text-slate-400">
+              <span id="reader-date" class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> </span>
+              <button id="reader-like-btn" class="flex items-center gap-1.5 bg-surfaceCard px-3 py-1.5 rounded-xl text-slate-200 hover:text-pink-400 border border-borderSlate transition font-bold">
+                <i data-lucide="heart" class="w-4 h-4 text-pink-500"></i> <span id="reader-likes-count">0</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Podcast Varsa Ses Çaları -->
+          <div id="reader-podcast-container" class="hidden p-4 bg-surfaceCard rounded-2xl border border-purple-500/30 space-y-2">
+            <div class="flex items-center gap-2 text-sm font-bold text-purple-300">
+              <i data-lucide="volume-2" class="w-5 h-5 text-purple-400"></i> Podcast Kaydını Dinle
+            </div>
+            <audio id="reader-audio-player" controls class="w-full h-10" style="filter: invert(0.9) hue-rotate(180deg);"></audio>
+          </div>
+
+          <!-- Makale Metni -->
+          <div id="reader-body-content" class="text-sm sm:text-base text-slate-300 leading-relaxed space-y-4 font-normal whitespace-pre-line"></div>
+
+          <!-- Kaynakça Bölümü -->
+          <div class="mt-8 p-5 bg-surfaceCard/90 border border-bmGold/30 rounded-2xl space-y-2">
+            <h4 class="font-bold text-sm text-bmGold flex items-center gap-2">
+              <i data-lucide="bookmark" class="w-4 h-4"></i> Bilimsel Kaynaklar & Literatür
+            </h4>
+            <div id="reader-citations" class="text-xs text-slate-300 font-mono leading-relaxed pl-2 border-l-2 border-bmGold/50"></div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- 2. PROFİL SAYFASI -->
     <div id="profile-view" class="hidden space-y-6">
       <button onclick="goHome()" class="flex items-center gap-2 text-xs text-blue-400 hover:underline">
         <i data-lucide="arrow-left" class="w-4 h-4"></i> Ana Akışa Geri Dön
@@ -129,7 +185,7 @@
               <span id="profile-role" class="text-xs px-3 py-1 rounded-full font-bold bg-amber-500/10 text-bmGold border border-bmGold/30">Üye</span>
             </div>
             <p id="profile-handle" class="text-xs text-slate-400">@kullanici</p>
-            <p id="profile-bio" class="text-xs text-slate-300 max-w-2xl leading-relaxed">Bilimin Mirası platformunda bilimsel araştırmalar ve içerikler paylaşıyor.</p>
+            <p id="profile-bio" class="text-xs text-slate-300 max-w-2xl leading-relaxed"></p>
           </div>
           <div class="bg-surfaceCard border border-bmGold/30 rounded-2xl p-4 text-center min-w-[150px]">
             <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Toplam Miras Gücü</span>
@@ -150,7 +206,7 @@
       </div>
     </div>
 
-    <!-- ANA AKIŞ -->
+    <!-- 3. ANA AKIŞ GÖRÜNÜMÜ -->
     <div id="main-feed-view" class="grid grid-cols-1 lg:grid-cols-4 gap-8">
       
       <div class="lg:col-span-3 space-y-6">
@@ -170,6 +226,7 @@
           <span id="feed-count-badge" class="text-xs text-slate-400">Yükleniyor...</span>
         </div>
 
+        <!-- Kart Grid Alanı -->
         <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
 
         <!-- YÖNETİCİ PANELİ -->
@@ -205,7 +262,7 @@
 
       </div>
 
-      <!-- SAĞ SÜTUN: LİDERLİK TABLOSU -->
+      <!-- SAĞ SÜTUN -->
       <aside class="space-y-6">
         <div class="bg-surfaceDark border border-borderSlate rounded-2xl p-5 shadow-lg space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-borderSlate">
@@ -367,7 +424,6 @@
   <script>
     document.getElementById('top-date-display').innerText = new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
 
-    // Temizlenmiş başlangıç listesi
     const INITIAL_USERS = [
       { id: 'u1', name: 'Mert', username: 'Mert', role: 'Yönetici', bmScore: 68500, bio: 'Bilimin Mirası Platform Kurucusu & Yönetici' },
       { id: 'u2', name: 'Prof. Dr. Celal Şengör', username: 'celal_sengor', role: 'Profesör', bmScore: 92400, bio: 'Jeoloji ve tektonik araştırmacısı.' },
@@ -384,11 +440,10 @@
         type: 'makale',
         authorName: 'Prof. Dr. Celal Şengör',
         authorUsername: 'celal_sengor',
-        coAuthors: 'Doç. Dr. Selin Kaya',
         role: 'Profesör',
-        image: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80',
-        content: 'Tip Ia süpernova gözlemleri ve kozmik mikrodalga arka plan ışıması, evrenin genişleme hızının giderek arttığını kanıtlamaktadır...',
-        citations: '1. Riess et al., Observational Evidence for an Accelerating Universe\n2. Nature Physics',
+        image: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1200&q=80',
+        content: `Tip Ia süpernova gözlemleri ve kozmik mikrodalga arka plan ışıması, evrenin genişleme hızının giderek arttığını kanıtlamaktadır. 1990'ların sonuna kadar yerçekiminin genişlemeyi yavaşlatacağı düşünülüyordu; ancak gözlemler, evrenin yaklaşık %68'ini oluşturan gizemli bir negatif basınç kaynağını — yani 'Karanlık Enerji'yi işaret etti.\n\nKaranlık enerji, uzay boşluğunun kendisinin sahip olduğu bir enerji yoğunluğu (kozmolojik sabit) olabileceği gibi dinamik bir alan (quintessence) da olabilir. James Webb ve Euclid uzay teleskoplarından gelen son veriler, evrenin ivmelenme tarihini daha önce hiç olmadığı kadar hassas bir şekilde haritalandırmamıza yardımcı olmaktadır.`,
+        citations: '1. Riess et al., 1998, Observational Evidence for an Accelerating Universe\n2. Perlmutter et al., 1999, Measurements of Omega and Lambda\n3. Nature Physics 2025 Review',
         date: 'Bugün',
         likes: 412
       },
@@ -398,11 +453,10 @@
         type: 'makale',
         authorName: 'Doç. Dr. Selin Kaya',
         authorUsername: 'selinkaya',
-        coAuthors: '',
         role: 'Doçent',
-        image: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80',
-        content: 'Telomeraz enzim aktivasyonunun kontrollü olarak test edilmesi, doku dejenerasyonunu durdurma konusunda yeni kapılar aralıyor.',
-        citations: 'Cell Metabolism, Cilt 32.',
+        image: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=1200&q=80',
+        content: `Telomeraz enzim aktivasyonunun kontrollü olarak test edilmesi, doku dejenerasyonunu durdurma konusunda yeni biyoteknolojik kapılar aralıyor. Her hücre bölünmesinde kromozomlarımızın uçlarındaki koruyucu telomer başlıkları kısalır ve Hayflick sınırına ulaşıldığında hücre yaşlanma (senescence) evresine girer.\n\nSon laboratuvar modellerinde, CRISPR tabanlı epigenetik düzenleyiciler sayesinde telomer uzunluğu hücrenin kontrolsüz çoğalmasını tetiklemeden korunabilmiştir. Bu durum özellikle nörodejeneratif hastalıkların önlenmesinde büyük bir umut kaynağıdır.`,
+        citations: '1. Blackburn, E. H. (2010). Telomeres and Telomerase: The Path from Biology to Human Health.\n2. Cell Metabolism, Cilt 32.',
         date: 'Dün',
         likes: 289
       },
@@ -412,12 +466,11 @@
         type: 'podcast',
         authorName: 'Mert',
         authorUsername: 'Mert',
-        coAuthors: '',
         role: 'Yönetici',
-        image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80',
+        image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=1200&q=80',
         audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-        content: 'Zamanın akışı yerçekimi alanında ve yüksek hızlarda neden değişir? Einstein denklemlerini konuşuyoruz.',
-        citations: 'Einstein, A. İzafiyet Teorisi.',
+        content: `Zamanın akışı yerçekimi alanında ve yüksek hızlarda neden değişir? Einstein'ın Özel ve Genel Görelilik teorilerini, kütleçekimsel zaman genleşmesini ve gündelik mantığımızın neden ışık hızında iflas ettiğini tartıştık. Aşağıdaki ses çalarından podcast kaydımızı dinleyebilirsiniz.`,
+        citations: 'Einstein, A. İzafiyet Teorisi Temelleri.',
         date: '2 gün önce',
         likes: 310
       },
@@ -427,26 +480,25 @@
         type: 'blog',
         authorName: 'Alperen Demir',
         authorUsername: 'alperen',
-        coAuthors: '',
         role: 'Blog Yazarı',
-        image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
-        content: 'Termodinamiğin 2. Yasası evrenin nihai sonunu nasıl çiziyor?',
+        image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
+        content: `Kahveye süt karıştırdığınızda neden kendiliğinden ayrışmaz? Termodinamiğin 2. Yasası evrenin nihai kaderini nasıl çiziyor? Entropi sadece bir ısı ve moleküler dağılım ölçüsü değil, aynı zamanda zamanın tek yönlü okudur. Evren düzenden düzensizliğe doğru kaçınılmaz bir akış içindedir.`,
         citations: 'Feynman Fizik Dersleri, Cilt 1.',
         date: '3 gün önce',
         likes: 95
       }
     ];
 
-    let users = JSON.parse(localStorage.getItem('bm_users_v4')) || INITIAL_USERS;
-    let posts = JSON.parse(localStorage.getItem('bm_posts_v4')) || INITIAL_POSTS;
-    let currentUser = JSON.parse(localStorage.getItem('bm_current_user_v4')) || null;
+    let users = JSON.parse(localStorage.getItem('bm_users_v5')) || INITIAL_USERS;
+    let posts = JSON.parse(localStorage.getItem('bm_posts_v5')) || INITIAL_POSTS;
+    let currentUser = JSON.parse(localStorage.getItem('bm_current_user_v5')) || null;
     let activeFilter = 'all';
     let uploadedImageBase64 = null;
 
     function saveState() {
-      localStorage.setItem('bm_users_v4', JSON.stringify(users));
-      localStorage.setItem('bm_posts_v4', JSON.stringify(posts));
-      localStorage.setItem('bm_current_user_v4', JSON.stringify(currentUser));
+      localStorage.setItem('bm_users_v5', JSON.stringify(users));
+      localStorage.setItem('bm_posts_v5', JSON.stringify(posts));
+      localStorage.setItem('bm_current_user_v5', JSON.stringify(currentUser));
     }
 
     function isAcademicImmune(role) {
@@ -469,18 +521,80 @@
       }
     }
 
+    // --- MAKALE OKUMA FONKSİYONU (TIKLAYINCA AÇILIR) ---
+    function openArticleDetail(postId) {
+      const p = posts.find(item => item.id === postId);
+      if (!p) return;
+
+      document.getElementById('main-feed-view').classList.add('hidden');
+      document.getElementById('profile-view').classList.add('hidden');
+      document.getElementById('article-reader-view').classList.remove('hidden');
+
+      // Bilgileri Doldur
+      document.getElementById('reader-image').src = p.image;
+      document.getElementById('reader-title').innerText = p.title;
+      document.getElementById('reader-body-content').innerText = p.content;
+      document.getElementById('reader-citations').innerText = p.citations || 'Kaynak belirtilmedi (Akademik unvan muafiyeti).';
+      document.getElementById('reader-date').innerHTML = `<i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${p.date}`;
+      document.getElementById('reader-likes-count').innerText = p.likes;
+
+      // Rozet
+      const bEl = document.getElementById('reader-badge');
+      if (p.type === 'makale') {
+        bEl.className = 'absolute top-4 left-4 text-xs font-extrabold uppercase px-3 py-1 rounded-full border bg-blue-500/20 text-blue-300 border-blue-400/40 backdrop-blur-md';
+        bEl.innerText = 'Bilimsel Makale';
+      } else if (p.type === 'blog') {
+        bEl.className = 'absolute top-4 left-4 text-xs font-extrabold uppercase px-3 py-1 rounded-full border bg-emerald-500/20 text-emerald-300 border-emerald-400/40 backdrop-blur-md';
+        bEl.innerText = 'Blog Yazısı';
+      } else if (p.type === 'podcast') {
+        bEl.className = 'absolute top-4 left-4 text-xs font-extrabold uppercase px-3 py-1 rounded-full border bg-purple-500/20 text-purple-300 border-purple-400/40 backdrop-blur-md';
+        bEl.innerText = 'Podcast / Ses';
+      } else {
+        bEl.className = 'absolute top-4 left-4 text-xs font-extrabold uppercase px-3 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-400/40 backdrop-blur-md';
+        bEl.innerText = 'Soru & Tartışma';
+      }
+
+      // Yazar Bilgisi
+      document.getElementById('reader-author-avatar').innerText = p.authorName.substring(0, 1);
+      document.getElementById('reader-author-name').innerText = p.authorName;
+      document.getElementById('reader-author-role').innerText = p.role;
+      document.getElementById('reader-author-box').onclick = () => viewProfile(p.authorUsername);
+
+      // Beğeni Butonu
+      document.getElementById('reader-like-btn').onclick = () => {
+        likeArticle(p.id, p.authorUsername);
+        document.getElementById('reader-likes-count').innerText = p.likes;
+      };
+
+      // Podcast Alanı
+      const podContainer = document.getElementById('reader-podcast-container');
+      const podAudio = document.getElementById('reader-audio-player');
+      if (p.type === 'podcast' && p.audioUrl) {
+        podContainer.classList.remove('hidden');
+        podAudio.src = p.audioUrl;
+      } else {
+        podContainer.classList.add('hidden');
+        podAudio.src = '';
+      }
+
+      lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- PROFİL SAYFASI ---
     function viewProfile(username) {
       const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
       if (!user) return;
 
       document.getElementById('main-feed-view').classList.add('hidden');
+      document.getElementById('article-reader-view').classList.add('hidden');
       document.getElementById('profile-view').classList.remove('hidden');
 
       document.getElementById('profile-avatar').innerText = user.name.substring(0, 2).toUpperCase();
       document.getElementById('profile-fullname').innerText = user.name;
       document.getElementById('profile-role').innerText = user.role;
       document.getElementById('profile-handle').innerText = '@' + user.username;
-      document.getElementById('profile-bio').innerText = user.bio || 'Bilimin Mirası üyesi.';
+      document.getElementById('profile-bio').innerText = user.bio || 'Bilimin Mirası platformu üyesi.';
       document.getElementById('profile-bm-score').innerText = (user.bmScore || 0).toLocaleString();
 
       const authorPosts = posts.filter(p => p.authorUsername.toLowerCase() === user.username.toLowerCase());
@@ -496,9 +610,11 @@
     }
 
     function goHome() {
+      document.getElementById('article-reader-view').classList.add('hidden');
       document.getElementById('profile-view').classList.add('hidden');
       document.getElementById('main-feed-view').classList.remove('hidden');
       renderFeed();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function openMyProfile() {
@@ -506,6 +622,7 @@
       else viewProfile(currentUser.username);
     }
 
+    // --- KART HTML ÜRETİCİ (TIKLANABİLİR YAPILDI) ---
     function generateCardHTML(item) {
       let badge = 'bg-blue-500/10 text-blue-400 border-blue-500/30';
       let typeLabel = 'Bilimsel Makale';
@@ -515,7 +632,9 @@
 
       return `
         <article class="bg-surfaceDark border border-borderSlate rounded-2xl overflow-hidden hover:border-bmGold/40 transition duration-300 flex flex-col justify-between group shadow-lg">
-          <div>
+          
+          <!-- Tıklanınca Makaleyi Açan Bölüm -->
+          <div onclick="openArticleDetail('${item.id}')" class="cursor-pointer">
             <div class="relative h-44 w-full overflow-hidden bg-slate-950">
               <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
               <span class="absolute top-3 left-3 text-[10px] font-bold tracking-wide uppercase px-2.5 py-1 rounded-full border backdrop-blur-md ${badge}">
@@ -527,26 +646,14 @@
               <h3 class="font-bold text-sm text-white group-hover:text-bmGold transition line-clamp-2 leading-snug">${item.title}</h3>
               <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed">${item.content}</p>
 
-              ${item.type === 'podcast' ? `
-                <div class="mt-2 p-2 bg-surfaceCard rounded-xl border border-borderSlate">
-                  <div class="flex items-center gap-1.5 text-xs text-purple-300 font-bold mb-1">
-                    <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> Ses Kaydı Dinle
-                  </div>
-                  <audio controls class="w-full h-7" style="filter: invert(0.9) hue-rotate(180deg);">
-                    <source src="${item.audioUrl}" type="audio/mpeg">
-                  </audio>
-                </div>
-              ` : ''}
-
-              <div class="p-2 bg-surfaceCard/60 border border-borderSlate rounded-xl text-[10px]">
-                <span class="font-bold text-bmGold flex items-center gap-1">
-                  <i data-lucide="bookmark" class="w-3 h-3"></i> Kaynakça / Literatür:
-                </span>
-                <p class="text-slate-400 italic line-clamp-1 font-mono">${item.citations}</p>
+              <div class="flex items-center text-xs text-bmGold font-bold gap-1 mt-2">
+                <span>Yazıyı Oku</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition"></i>
               </div>
             </div>
           </div>
 
+          <!-- Yazar Alt Kısmı -->
           <div class="px-4 py-3 bg-surfaceCard border-t border-borderSlate flex items-center justify-between text-xs">
             <div class="flex items-center gap-2 cursor-pointer group/author" onclick="viewProfile('${item.authorUsername}')">
               <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-amber-600 to-blue-600 text-white font-bold text-[11px] flex items-center justify-center">
@@ -704,7 +811,7 @@
       else if (type === 'soru') earnedPoints = 500;
       else if (type === 'podcast') earnedPoints = 5000;
 
-      const finalImage = uploadedImageBase64 || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80';
+      const finalImage = uploadedImageBase64 || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80';
 
       const newPost = {
         id: 'p_' + Date.now(),
@@ -846,10 +953,6 @@
 
     function setFilter(type) {
       activeFilter = type;
-      renderFeed();
-    }
-    function filterByTag(tag) {
-      document.getElementById('global-search').value = tag;
       renderFeed();
     }
     function handleSearch() {
