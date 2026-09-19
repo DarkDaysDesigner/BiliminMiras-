@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nöron Hub | Özgür Bilim & Düşünce Platformu</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#070b14">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brandDark: '#070b14',
+            panelDark: '#0c1222',
+            cardDark: '#121a2f',
+            borderDark: '#1e293b',
+            accentBlue: '#2563eb'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-brandDark text-slate-200 min-h-screen flex flex-col font-sans antialiased pb-20 md:pb-0">
+
+  <div class="flex flex-1">
+    <!-- Masaüstü Sol Menü (Sidebar) -->
+    <aside class="w-64 border-r border-borderDark bg-panelDark/80 backdrop-blur-md hidden md:flex flex-col justify-between p-5 sticky top-0 h-screen z-20">
+      <div>
+        <!-- Logo -->
+        <div class="flex items-center gap-3 mb-8 cursor-pointer" onclick="switchTab('feed')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-cyan-500 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
+            <i data-lucide="atom" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h1 class="font-bold text-lg tracking-wide text-white">NÖRON HUB</h1>
+            <p class="text-[11px] text-slate-400">Özgür Bilim Ekosistemi</p>
+          </div>
+        </div>
+
+        <!-- Gezinti Linkleri -->
+        <nav class="space-y-1.5 text-sm">
+          <button onclick="filterContent('all')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-blue-600/10 text-blue-400 font-medium transition text-left">
+            <i data-lucide="layout-grid" class="w-4 h-4"></i> Tümü
+          </button>
+          <button onclick="filterContent('makale')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
+            <i data-lucide="book-open" class="w-4 h-4"></i> Makaleler <span class="ml-auto text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-bold">Akademik</span>
+          </button>
+          <button onclick="filterContent('blog')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
+            <i data-lucide="file-text" class="w-4 h-4"></i> Bloglar
+          </button>
+          <button onclick="filterContent('soru')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
+            <i data-lucide="help-circle" class="w-4 h-4"></i> Soru & Cevap
+          </button>
+          <button onclick="filterContent('podcast')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
+            <i data-lucide="mic" class="w-4 h-4"></i> Podcast (Sesler)
+          </button>
+        </nav>
+      </div>
+
+      <!-- Kullanıcı / Giriş Alanı -->
+      <div id="sidebar-auth-area" class="border-t border-borderDark pt-4">
+        <!-- JS ile dolacak -->
+      </div>
+    </aside>
+
+    <!-- Ana İçerik -->
+    <main class="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
+      <!-- Üst Bar -->
+      <header class="flex items-center justify-between gap-4 mb-6">
+        <div class="flex items-center gap-3 md:hidden">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
+            <i data-lucide="atom" class="w-5 h-5"></i>
+          </div>
+          <span class="font-bold text-white text-base">Nöron Hub</span>
+        </div>
+
+        <div class="relative flex-1 max-w-md hidden sm:block">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500"></i>
+          <input type="text" id="searchInput" oninput="searchPosts()" placeholder="Başlık, yazar veya konu ara..." class="w-full bg-panelDark border border-borderDark rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- PWA İndir Butonu -->
+          <button id="pwa-install-btn" class="hidden items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl border border-borderDark transition">
+            <i data-lucide="download" class="w-4 h-4 text-blue-400"></i> <span class="hidden sm:inline">Uygulamayı İndir</span>
+          </button>
+
+          <!-- Yeni Paylaşım Butonu -->
+          <button onclick="openPublishModal()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-lg shadow-blue-600/20 transition">
+            <i data-lucide="plus" class="w-4 h-4"></i> <span class="hidden sm:inline">Paylaşım Yap</span>
+          </button>
+
+          <button onclick="openAuthModal()" id="header-login-btn" class="bg-cardDark border border-borderDark px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white transition">
+            Giriş Yap
+          </button>
+        </div>
+      </header>
+
+      <!-- Sekmeler / Filtre Başlığı -->
+      <div class="flex items-center justify-between mb-6 pb-3 border-b border-borderDark">
+        <div>
+          <h2 id="current-section-title" class="text-xl font-bold text-white">Keşfet & Akış</h2>
+          <p id="current-section-desc" class="text-xs text-slate-400">Makaleler, bloglar, soru-cevaplar ve podcast'ler</p>
+        </div>
+        <div id="admin-badge-indicator" class="hidden">
+          <span class="text-xs font-semibold bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1 rounded-full flex items-center gap-1.5">
+            <i data-lucide="shield" class="w-3.5 h-3.5"></i> Mert (Yönetici)
+          </span>
+        </div>
+      </div>
+
+      <!-- İçerik Akışı Grid -->
+      <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- JS ile dolacak -->
+      </div>
+
+      <!-- Yönetim Paneli (Sadece Mert giriş yapınca görünür) -->
+      <section id="admin-panel" class="hidden mt-12 bg-panelDark border border-red-500/30 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center">
+              <i data-lucide="shield-alert" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-base">Yönetici Paneli (Mert)</h3>
+              <p class="text-xs text-slate-400">Kullanıcılara rütbe vererek makale yazma izni tanıyın.</p>
+            </div>
+          </div>
+          <span class="text-xs text-slate-400 bg-cardDark px-3 py-1 rounded-lg border border-borderDark">Tam Yetki</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-cardDark text-slate-400 border-b border-borderDark">
+              <tr>
+                <th class="p-3">Kullanıcı</th>
+                <th class="p-3">Mevcut Rütbe</th>
+                <th class="p-3">Yetkiyi Değiştir</th>
+                <th class="p-3">Makale Yetkisi?</th>
+              </tr>
+            </thead>
+            <tbody id="user-management-table" class="divide-y divide-borderDark text-slate-300">
+              <!-- JS ile kullanıcılar buraya gelir -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Mobil Alt Menü (Bottom Navigation) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-panelDark/95 backdrop-blur-lg border-t border-borderDark flex justify-around py-2.5 z-30">
+    <button onclick="filterContent('all')" class="flex flex-col items-center gap-1 text-blue-400">
+      <i data-lucide="layout-grid" class="w-5 h-5"></i>
+      <span class="text-[10px]">Akış</span>
+    </button>
+    <button onclick="filterContent('makale')" class="flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="book-open" class="w-5 h-5"></i>
+      <span class="text-[10px]">Makale</span>
+    </button>
+    <button onclick="openPublishModal()" class="flex flex-col items-center justify-center -mt-5 w-11 h-11 bg-blue-600 rounded-full shadow-lg shadow-blue-600/40 text-white">
+      <i data-lucide="plus" class="w-5 h-5"></i>
+    </button>
+    <button onclick="filterContent('podcast')" class="flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="mic" class="w-5 h-5"></i>
+      <span class="text-[10px]">Podcast</span>
+    </button>
+    <button onclick="filterContent('soru')" class="flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="help-circle" class="w-5 h-5"></i>
+      <span class="text-[10px]">Soru-Cevap</span>
+    </button>
+  </nav>
+
+  <!-- Giriş Yap Modalı -->
+  <div id="login-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-panelDark border border-borderDark rounded-2xl w-full max-w-sm p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-white text-base">Giriş Yap</h3>
+        <button onclick="closeModal('login-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <p class="text-xs text-slate-400">Yönetici girişi için <b>Mert</b> ve şifrenizi kullanın ya da dilediğiniz bir takma adla üye olarak devam edin.</p>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">Kullanıcı Adı</label>
+          <input type="text" id="login-username" placeholder="Örn: Mert veya Can" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Şifre</label>
+          <input type="password" id="login-password" placeholder="Şifreniz" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+        </div>
+        <p id="login-error" class="text-red-400 text-[11px] hidden"></p>
+        <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl transition">
+          Giriş Yap
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paylaşım Modalı -->
+  <div id="publish-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-panelDark border border-borderDark rounded-2xl w-full max-w-lg p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-white text-base">İçerik Paylaş</h3>
+        <button onclick="closeModal('publish-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">İçerik Türü</label>
+          <select id="post-type" onchange="checkPublishPermissions()" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+            <option value="blog">✍️ Blog Yazısı (Tüm Üyeler)</option>
+            <option value="soru">❓ Soru & Cevap (Tüm Üyeler)</option>
+            <option value="podcast">🎙️ Podcast / Ses Kaydı (Tüm Üyeler)</option>
+            <option value="makale">📚 Bilimsel Makale (Sadece Profesör / Doçent / Bilim İnsanı / Yönetici)</option>
+          </select>
+        </div>
+
+        <div id="makale-warning" class="hidden p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[11px]">
+          ⚠️ <b>Yetki Kısıtlaması:</b> Makale yayınlayabilmek için Yönetici (Mert) tarafından <b>Profesör</b>, <b>Doçent</b> veya <b>Bilim İnsanı</b> olarak onaylanmanız gerekir. Mevcut yetkiniz yetersizse yazınız Blog olarak paylaşılacaktır.
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1">Başlık</label>
+          <input type="text" id="post-title" placeholder="İçeriğin çarpıcı başlığı..." class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+        </div>
+
+        <div id="audio-input-area" class="hidden">
+          <label class="block text-slate-400 mb-1">Ses Dosyası / Podcast URL (MP3 veya Web Sesi)</label>
+          <input type="text" id="post-audio-url" placeholder="https://example.com/audio.mp3" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+          <p class="text-[10px] text-slate-500 mt-1">Örnek test sesi için boş bırakırsanız otomatik örnek ses atanır.</p>
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1">İçerik Detayı / Açıklama</label>
+          <textarea id="post-content" rows="4" placeholder="Metninizi veya sorunuzu detaylandırın..." class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500"></textarea>
+        </div>
+
+        <button onclick="handlePublish()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl transition">
+          Yayınla
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- VERİTABANI & STATE YÖNETİMİ ---
+    const DEFAULT_USERS = [
+      { id: '1', username: 'Mert', role: 'Yönetici' },
+      { id: '2', username: 'Dr. Zeynep', role: 'Profesör' },
+      { id: '3', username: 'Ahmet_Kaya', role: 'Doçent' },
+      { id: '4', username: 'Selin99', role: 'Bilim İnsanı' },
+      { id: '5', username: 'MerakliGenc', role: 'Blog Yazarı' },
+      { id: '6', username: 'EvrenYolcusu', role: 'Üye' }
+    ];
+
+    const DEFAULT_POSTS = [
+      {
+        id: '1',
+        title: 'Karanlık Madde ve Galaktik Dönme Eğrileri Üzerine İnceleme',
+        type: 'makale',
+        author: 'Dr. Zeynep',
+        role: 'Profesör',
+        content: 'Galaksilerin sarmal kollarındaki dönüş hızları, görünür kütlenin açıkladığından çok daha fazlasına işaret etmektedir...',
+        date: 'Bugün',
+        likes: 124
+      },
+      {
+        id: '2',
+        title: 'Bilinç Nedir? Nörolojik Bir Bakış Açısı',
+        type: 'blog',
+        author: 'MerakliGenc',
+        role: 'Blog Yazarı',
+        content: 'Beynimizdeki milyarlarca nöron nasıl oluyor da bir benlik hissi yaratıyor? İşte son okuduğum kitaptan aldığım notlar.',
+        date: 'Dün',
+        likes: 42
+      },
+      {
+        id: '3',
+        title: 'Evrenin Genişleme Hızı Neden Artıyor?',
+        type: 'soru',
+        author: 'EvrenYolcusu',
+        role: 'Üye',
+        content: 'Hubble sabiti konusundaki uyumsuzluklar tam olarak ne anlama geliyor? Fizikçi arkadaşlar aydınlatabilir mi?',
+        date: '2 gün önce',
+        likes: 19
+      },
+      {
+        id: '4',
+        title: 'Bölüm #1: Kuantum Dolanıklık ve Zaman Algısı',
+        type: 'podcast',
+        author: 'Mert',
+        role: 'Yönetici',
+        audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        content: 'Bu podcast kaydında Einstein’ın "uzaktan hayaletsi etki" dediği dolanıklık fenomenini ele aldık.',
+        date: 'Bugün',
+        likes: 88
+      }
+    ];
+
+    // LocalStorage Yükleme
+    let users = JSON.parse(localStorage.getItem('noron_users')) || DEFAULT_USERS;
+    let posts = JSON.parse(localStorage.getItem('noron_posts')) || DEFAULT_POSTS;
+    let currentUser = JSON.parse(localStorage.getItem('noron_current_user')) || null;
+    let currentFilter = 'all';
+
+    function saveData() {
+      localStorage.setItem('noron_users', JSON.stringify(users));
+      localStorage.setItem('noron_posts', JSON.stringify(posts));
+      localStorage.setItem('noron_current_user', JSON.stringify(currentUser));
+    }
+
+    // --- RÜTBE ROLLERİ & MAKALE İZNİ ---
+    const ACADEMIC_ROLES = ['Yönetici', 'Profesör', 'Doçent', 'Bilim İnsanı'];
+
+    function canPublishArticle(role) {
+      return ACADEMIC_ROLES.includes(role);
+    }
+
+    // --- ARAYÜZ YENİLEME ---
+    function render() {
+      renderAuth();
+      renderPosts();
+      renderAdminTable();
+      lucide.createIcons();
+    }
+
+    function renderAuth() {
+      const sidebarAuth = document.getElementById('sidebar-auth-area');
+      const headerLoginBtn = document.getElementById('header-login-btn');
+      const adminBadge = document.getElementById('admin-badge-indicator');
+      const adminPanel = document.getElementById('admin-panel');
+
+      if (currentUser) {
+        headerLoginBtn.classList.add('hidden');
+        if (currentUser.username === 'Mert') {
+          adminBadge.classList.remove('hidden');
+          adminPanel.classList.remove('hidden');
+        } else {
+          adminBadge.classList.add('hidden');
+          adminPanel.classList.add('hidden');
+        }
+
+        sidebarAuth.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full bg-blue-600/30 border border-blue-500 flex items-center justify-center font-bold text-xs text-blue-300">
+                ${currentUser.username.substring(0,2).toUpperCase()}
+              </div>
+              <div>
+                <p class="text-xs font-bold text-white">${currentUser.username}</p>
+                <p class="text-[10px] text-blue-400 font-semibold">${currentUser.role}</p>
+              </div>
+            </div>
+            <button onclick="handleLogout()" title="Çıkış Yap" class="text-slate-500 hover:text-red-400">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+      } else {
+        headerLoginBtn.classList.remove('hidden');
+        adminBadge.classList.add('hidden');
+        adminPanel.classList.add('hidden');
+        sidebarAuth.innerHTML = `
+          <button onclick="openAuthModal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-xl text-xs flex items-center justify-center gap-2 transition">
+            <i data-lucide="log-in" class="w-4 h-4"></i> Giriş Yap
+          </button>
+        `;
+      }
+    }
+
+    function renderPosts() {
+      const container = document.getElementById('posts-container');
+      const search = document.getElementById('searchInput').value.toLowerCase();
+
+      let filtered = posts.filter(p => {
+        const matchesFilter = (currentFilter === 'all') || (p.type === currentFilter);
+        const matchesSearch = p.title.toLowerCase().includes(search) || 
+                              p.author.toLowerCase().includes(search) || 
+                              p.content.toLowerCase().includes(search);
+        return matchesFilter && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-16 text-center text-slate-500">
+            <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
+            <p class="text-sm">Bu kategoride henüz bir paylaşım bulunmuyor.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map(post => {
+        // Tip Rozetleri
+        let badgeColor = 'bg-blue-500/10 text-blue-400 border-blue-500/30';
+        let typeLabel = 'Makale';
+        if (post.type === 'blog') { badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'; typeLabel = 'Blog'; }
+        if (post.type === 'soru') { badgeColor = 'bg-amber-500/10 text-amber-400 border-amber-500/30'; typeLabel = 'Soru & Cevap'; }
+        if (post.type === 'podcast') { badgeColor = 'bg-purple-500/10 text-purple-400 border-purple-500/30'; typeLabel = 'Podcast'; }
+
+        return `
+          <div class="bg-panelDark border border-borderDark rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition space-y-4">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <span class="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full border ${badgeColor}">
+                  ${typeLabel}
+                </span>
+                <span class="text-[11px] text-slate-500">${post.date}</span>
+              </div>
+              <h3 class="font-bold text-base text-white hover:text-blue-400 cursor-pointer transition leading-snug mb-2">${post.title}</h3>
+              <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed">${post.content}</p>
+              
+              ${post.type === 'podcast' ? `
+                <div class="mt-3 p-2.5 bg-cardDark rounded-xl border border-borderDark">
+                  <div class="flex items-center gap-2 mb-1.5 text-xs text-purple-300 font-semibold">
+                    <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> Ses Kaydı Dinle
+                  </div>
+                  <audio controls class="w-full h-8" style="filter: invert(0.9) hue-rotate(180deg);">
+                    <source src="${post.audioUrl || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'}" type="audio/mpeg">
+                  </audio>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-borderDark/60 text-xs">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-slate-800 text-[10px] flex items-center justify-center font-bold text-slate-300">
+                  ${post.author.substring(0,1)}
+                </div>
+                <div>
+                  <span class="font-medium text-slate-300">${post.author}</span>
+                  <span class="text-[10px] text-blue-400 block -mt-0.5">${post.role}</span>
+                </div>
+              </div>
+              <button onclick="likePost('${post.id}')" class="flex items-center gap-1 text-slate-400 hover:text-red-400 transition">
+                <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+                <span class="text-[11px]">${post.likes}</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('user-management-table');
+      tbody.innerHTML = users.map(u => `
+        <tr class="hover:bg-cardDark/50">
+          <td class="p-3 font-semibold text-white">${u.username}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded bg-slate-800 text-[11px] text-blue-300">${u.role}</span></td>
+          <td class="p-3">
+            <select onchange="changeRole('${u.id}', this.value)" class="bg-brandDark border border-borderDark rounded px-2 py-1 text-xs text-slate-300">
+              <option value="Üye" ${u.role === 'Üye' ? 'selected' : ''}>Üye</option>
+              <option value="Blog Yazarı" ${u.role === 'Blog Yazarı' ? 'selected' : ''}>Blog Yazarı</option>
+              <option value="Bilim İnsanı" ${u.role === 'Bilim İnsanı' ? 'selected' : ''}>Bilim İnsanı</option>
+              <option value="Doçent" ${u.role === 'Doçent' ? 'selected' : ''}>Doçent</option>
+              <option value="Profesör" ${u.role === 'Profesör' ? 'selected' : ''}>Profesör</option>
+              <option value="Yönetici" ${u.role === 'Yönetici' ? 'selected' : ''}>Yönetici</option>
+            </select>
+          </td>
+          <td class="p-3 font-bold ${canPublishArticle(u.role) ? 'text-emerald-400' : 'text-slate-500'}">
+            ${canPublishArticle(u.role) ? '✓ Makale Yazabilir' : '✗ Sadece Blog'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // --- ETKİLEŞİMLER & FİLTRELER ---
+    function filterContent(type) {
+      currentFilter = type;
+      const titles = {
+        'all': { t: 'Keşfet & Akış', d: 'Makaleler, bloglar, soru-cevaplar ve podcastler' },
+        'makale': { t: 'Bilimsel Makaleler', d: 'Sadece Profesör, Doçent ve Bilim İnsanlarının akademik yazıları' },
+        'blog': { t: 'Topluluk Blogları', d: 'Bilim meraklılarının ve yazarların paylaşımları' },
+        'soru': { t: 'Soru & Cevap', d: 'Merak edilenleri sorun, bilim insanları cevaplasın' },
+        'podcast': { t: 'Bilim Podcastleri', d: 'Sesli makaleler ve ses kayıtları' }
+      };
+      document.getElementById('current-section-title').innerText = titles[type].t;
+      document.getElementById('current-section-desc').innerText = titles[type].d;
+      renderPosts();
+    }
+
+    function searchPosts() {
+      renderPosts();
+    }
+
+    function likePost(id) {
+      const p = posts.find(item => item.id === id);
+      if (p) {
+        p.likes += 1;
+        saveData();
+        renderPosts();
+      }
+    }
+
+    // --- ROL DEĞİŞTİRME (MERT YÖNETİCİ KONTROLÜ) ---
+    function changeRole(userId, newRole) {
+      if (!currentUser || currentUser.username !== 'Mert') {
+        alert('Bu işlemi yalnızca Yönetici Mert yapabilir!');
+        return;
+      }
+      const u = users.find(item => item.id === userId);
+      if (u) {
+        u.role = newRole;
+        saveData();
+        render();
+      }
+    }
+
+    // --- GİRİŞ / ÇIKIŞ İŞLEMLERİ ---
+    function handleLogin() {
+      const uInput = document.getElementById('login-username').value.trim();
+      const pInput = document.getElementById('login-password').value.trim();
+      const err = document.getElementById('login-error');
+
+      if (!uInput) return;
+
+      // Özel Yönetici Girişi Kontrolü
+      if (uInput.toLowerCase() === 'mert') {
+        if (pInput !== '2626mert') {
+          err.innerText = 'Yönetici şifresi hatalı!';
+          err.classList.remove('hidden');
+          return;
+        }
+        currentUser = { id: 'admin_mert', username: 'Mert', role: 'Yönetici' };
+      } else {
+        // Normal Üye Girişi / Otomatik Kayıt
+        let existing = users.find(u => u.username.toLowerCase() === uInput.toLowerCase());
+        if (!existing) {
+          existing = { id: Date.now().toString(), username: uInput, role: 'Üye' };
+          users.push(existing);
+        }
+        currentUser = existing;
+      }
+
+      err.classList.add('hidden');
+      closeModal('login-modal');
+      saveData();
+      render();
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      saveData();
+      render();
+    }
+
+    // --- PAYLAŞIM YAPMA ---
+    function checkPublishPermissions() {
+      const type = document.getElementById('post-type').value;
+      const warning = document.getElementById('makale-warning');
+      const audioArea = document.getElementById('audio-input-area');
+
+      if (type === 'podcast') {
+        audioArea.classList.remove('hidden');
+      } else {
+        audioArea.classList.add('hidden');
+      }
+
+      if (type === 'makale') {
+        if (!currentUser || !canPublishArticle(currentUser.role)) {
+          warning.classList.remove('hidden');
+        } else {
+          warning.classList.add('hidden');
+        }
+      } else {
+        warning.classList.add('hidden');
+      }
+    }
+
+    function handlePublish() {
+      if (!currentUser) {
+        alert('Paylaşım yapabilmek için lütfen önce giriş yapın.');
+        openAuthModal();
+        return;
+      }
+
+      let type = document.getElementById('post-type').value;
+      const title = document.getElementById('post-title').value.trim();
+      const content = document.getElementById('post-content').value.trim();
+      const audioUrl = document.getElementById('post-audio-url').value.trim();
+
+      if (!title || !content) {
+        alert('Lütfen başlık ve içerik alanını doldurun.');
+        return;
+      }
+
+      // Makale Kısıtlama Denetimi:
+      if (type === 'makale' && !canPublishArticle(currentUser.role)) {
+        alert(`Rütbeniz (${currentUser.role}) doğrudan Makale yayınlamaya yetkili değil. Yazınız Blog kategorisine alındı.`);
+        type = 'blog';
+      }
+
+      const newPost = {
+        id: Date.now().toString(),
+        title,
+        type,
+        author: currentUser.username,
+        role: currentUser.role,
+        content,
+        audioUrl: audioUrl || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        date: 'Şimdi',
+        likes: 0
+      };
+
+      posts.unshift(newPost);
+      saveData();
+      closeModal('publish-modal');
+      render();
+    }
+
+    // Modal Yardımcıları
+    function openAuthModal() { document.getElementById('login-modal').classList.remove('hidden'); document.getElementById('login-modal').classList.add('flex'); }
+    function openPublishModal() { 
+      document.getElementById('publish-modal').classList.remove('hidden'); 
+      document.getElementById('publish-modal').classList.add('flex'); 
+      checkPublishPermissions();
+    }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+
+    // --- PWA SERVICE WORKER & KURULUM ---
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('pwa-install-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.classList.remove('hidden');
+      installBtn.classList.add('flex');
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installBtn.classList.add('hidden');
+        }
+        deferredPrompt = null;
+      }
+    });
+
+    // Başlangıç Çalıştırması
+    render();
+  </script>
+</body>
+</html>
