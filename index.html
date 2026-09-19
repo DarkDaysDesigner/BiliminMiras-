@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bilimin Mirası | Bilim, Felsefe ve Akıl Kütüphanesi</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#070d19">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            portalBg: '#050a15',       // Evrim Ağacı derin uzay mavisi
+            surfaceDark: '#0b1326',    // Kart ve panel rengi
+            surfaceCard: '#101c38',    // Vurgulu kart rengi
+            borderSlate: '#19284d',    // İnce bilimsel sınırlar
+            bmGold: '#f59e0b',         // BM Puan rengi (Kehribar)
+            bmBlue: '#3b82f6',         // Bilim mavisi
+            bmEmerald: '#10b981'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-portalBg text-slate-200 min-h-screen flex flex-col font-sans antialiased pb-20 md:pb-0">
+
+  <!-- 1. EN ÜST EVRİM AĞACI TARZI BİLİM BANDI -->
+  <div class="bg-surfaceDark/90 border-b border-borderSlate text-xs py-1.5 px-4 hidden md:block">
+    <div class="max-w-7xl mx-auto flex items-center justify-between text-slate-400">
+      <div class="flex items-center gap-4">
+        <span class="text-bmGold font-bold flex items-center gap-1">
+          <i data-lucide="zap" class="w-3.5 h-3.5"></i> GÜNÜN BİLİMSEL VERİSİ:
+        </span>
+        <span class="text-slate-300">James Webb, evrenin en eski sarmal gökadasını görüntüledi (z=4.4).</span>
+      </div>
+      <div class="flex items-center gap-4 text-[11px]">
+        <span>Akıl • Bilim • Miras</span>
+        <span class="text-slate-600">|</span>
+        <span id="top-date-display" class="text-slate-300"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ANA ÜST MENÜ & MARKA (HEADER) -->
+  <header class="bg-surfaceDark border-b border-borderSlate sticky top-0 z-40 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      
+      <!-- Logo & Başlık -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-indigo-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-blue-900/40">
+          <i data-lucide="dna" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="font-black text-xl tracking-wider text-white flex items-center gap-1.5">
+            BİLİMİN MİRASI <span class="text-[10px] bg-bmGold/20 text-bmGold px-2 py-0.5 rounded-full border border-bmGold/30">PRO</span>
+          </h1>
+          <p class="text-[10px] text-slate-400 tracking-tight">Akıl, Bilim & Doğrulanmış Düşünce Platformu</p>
+        </div>
+      </div>
+
+      <!-- Arama Barı -->
+      <div class="relative flex-1 max-w-md hidden md:block">
+        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500"></i>
+        <input type="text" id="global-search" oninput="handleSearch()" placeholder="Bilimsel makale, yazar, doçent veya konu ara..." class="w-full bg-surfaceCard border border-borderSlate rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-bmGold transition">
+      </div>
+
+      <!-- Sağ Aksiyon Butonları -->
+      <div class="flex items-center gap-2.5">
+        <!-- PWA İndir -->
+        <button id="pwa-install-btn" class="hidden items-center gap-1.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-black text-xs font-bold px-3 py-2 rounded-xl shadow-md transition">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> <span>Uygulamayı İndir</span>
+        </button>
+
+        <!-- İçerik Yaz -->
+        <button onclick="openPublishModal()" class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-md shadow-blue-700/30 transition">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> <span class="hidden sm:inline">Paylaşım Yap</span>
+        </button>
+
+        <!-- Giriş / Kullanıcı Çipi -->
+        <div id="header-user-slot"></div>
+      </div>
+    </div>
+
+    <!-- Kategori Alt Barı (Evrim Ağacı stili konular) -->
+    <div class="bg-portalBg border-t border-borderSlate px-4 overflow-x-auto hide-scrollbar">
+      <div class="max-w-7xl mx-auto flex items-center gap-2 py-2 text-xs font-semibold">
+        <button onclick="setFilter('all')" class="cat-pill px-3 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 whitespace-nowrap">Tümü</button>
+        <button onclick="setFilter('makale')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap flex items-center gap-1.5">
+          <i data-lucide="book-open" class="w-3.5 h-3.5 text-bmGold"></i> Makaleler
+        </button>
+        <button onclick="setFilter('blog')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap">Bloglar</button>
+        <button onclick="setFilter('soru')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap">Soru & Cevap</button>
+        <button onclick="setFilter('podcast')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-300 border border-transparent whitespace-nowrap flex items-center gap-1">
+          <i data-lucide="mic" class="w-3.5 h-3.5 text-purple-400"></i> Podcast
+        </button>
+        <span class="text-slate-600">|</span>
+        <button onclick="filterByTag('Evrim')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-400 whitespace-nowrap">🧬 Evrim</button>
+        <button onclick="filterByTag('Astrofizik')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-400 whitespace-nowrap">🌌 Astrofizik</button>
+        <button onclick="filterByTag('Yapay Zeka')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-400 whitespace-nowrap">🤖 Yapay Zekâ</button>
+        <button onclick="filterByTag('Nöroloji')" class="cat-pill px-3 py-1.5 rounded-lg hover:bg-surfaceDark text-slate-400 whitespace-nowrap">🧠 Nöroloji</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. ANA GÖVDE (İKİ SÜTUNLU EVRİM AĞACI DÜZENİ) -->
+  <div class="max-w-7xl mx-auto px-4 py-6 w-full flex-1">
+    
+    <!-- PROFİL SAYFASI GÖRÜNÜMÜ (Başlangıçta Gizli) -->
+    <div id="profile-view" class="hidden space-y-6">
+      <button onclick="goHome()" class="flex items-center gap-2 text-xs text-blue-400 hover:underline">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Ana Akışa Geri Dön
+      </button>
+
+      <div class="bg-surfaceDark border border-borderSlate rounded-2xl p-6 relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+          <div id="profile-avatar" class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-amber-600 to-blue-600 text-white font-extrabold text-2xl flex items-center justify-center shadow-xl">
+            --
+          </div>
+          <div class="flex-1 text-center sm:text-left space-y-2">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+              <h2 id="profile-fullname" class="text-2xl font-black text-white">Yazar Adı</h2>
+              <span id="profile-role" class="text-xs px-3 py-1 rounded-full font-bold bg-amber-500/10 text-bmGold border border-bmGold/30">Üye</span>
+            </div>
+            <p id="profile-handle" class="text-xs text-slate-400">@kullanici</p>
+            <p id="profile-bio" class="text-xs text-slate-300 max-w-2xl leading-relaxed">Bilimin Mirası platformunda bilimsel araştırmalar ve içerikler paylaşıyor.</p>
+          </div>
+          <!-- BM Skor Kartı -->
+          <div class="bg-surfaceCard border border-bmGold/30 rounded-2xl p-4 text-center min-w-[150px]">
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Toplam Miras Gücü</span>
+            <div class="flex items-center justify-center gap-1.5 mt-1">
+              <i data-lucide="award" class="w-5 h-5 text-bmGold"></i>
+              <span id="profile-bm-score" class="text-2xl font-black text-bmGold">0</span>
+            </div>
+            <span class="text-[10px] text-amber-300 font-semibold">BM Puanı</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kullanıcının Yazıları -->
+      <div>
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i data-lucide="library" class="w-5 h-5 text-blue-400"></i> Bu Yazarın Kaleme Aldığı İçerikler
+        </h3>
+        <div id="profile-posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </div>
+    </div>
+
+    <!-- ANA AKIŞ GÖRÜNÜMÜ (VARSAYILAN) -->
+    <div id="main-feed-view" class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      
+      <!-- Sol / Ana Akış Sütunu (3 Kolon) -->
+      <div class="lg:col-span-3 space-y-6">
+
+        <!-- Manşet / Öne Çıkan Başlık -->
+        <div class="relative bg-gradient-to-r from-blue-950/80 to-surfaceDark border border-blue-800/40 rounded-2xl p-6 overflow-hidden">
+          <div class="relative z-10 max-w-xl space-y-2">
+            <span class="text-[10px] font-bold bg-bmGold text-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">Haftanın Baş Makalesi</span>
+            <h2 class="text-xl sm:text-2xl font-black text-white leading-tight">James Webb ve Erken Evren: Standart Kozmoloji Modelini Yeniden Yazmak</h2>
+            <p class="text-xs text-slate-300 line-clamp-2">Büyük Patlama'dan yalnızca birkaç yüz milyon yıl sonra saptanan dev galaksiler modern astrofiziğin sınırlarını zorluyor.</p>
+          </div>
+        </div>
+
+        <!-- Yazı Başlığı & Filtre Özeti -->
+        <div class="flex items-center justify-between border-b border-borderSlate pb-3">
+          <h3 id="feed-header-title" class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> Bilim Akışı
+          </h3>
+          <span id="feed-count-badge" class="text-xs text-slate-400">Yükleniyor...</span>
+        </div>
+
+        <!-- Kart Grid Alanı -->
+        <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+
+        <!-- YÖNETİCİ PANELİ (Mert Girişiyle Açılır) -->
+        <section id="admin-panel" class="hidden bg-surfaceDark border border-amber-500/40 rounded-2xl p-6 shadow-2xl mt-8">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-bmGold flex items-center justify-center">
+                <i data-lucide="crown" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-base">Yönetici Paneli (Mert)</h4>
+                <p class="text-xs text-slate-400">Üyelere Profesör, Doçent ve Bilim İnsanı rütbesi atayın.</p>
+              </div>
+            </div>
+            <span class="text-[11px] bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full font-bold">Kritik Yetki</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-surfaceCard text-slate-400 border-b border-borderSlate">
+                <tr>
+                  <th class="p-3">Adı Soyadı</th>
+                  <th class="p-3">Mevcut Ünvan</th>
+                  <th class="p-3">BM Puanı</th>
+                  <th class="p-3">Yetki Değiştir</th>
+                  <th class="p-3">Kaynak Zorunluluğu</th>
+                </tr>
+              </thead>
+              <tbody id="admin-table-body" class="divide-y divide-borderSlate text-slate-300"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Sağ Sütun: LİDERLİK TABLOSU (EN ÇOK BM PUANI OLANLAR) & KURALLAR -->
+      <aside class="space-y-6">
+        
+        <!-- BM Puan Liderleri Kartı -->
+        <div class="bg-surfaceDark border border-borderSlate rounded-2xl p-5 shadow-lg space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-borderSlate">
+            <div class="flex items-center gap-2">
+              <i data-lucide="trophy" class="w-5 h-5 text-bmGold"></i>
+              <h4 class="font-bold text-sm text-white">Miras Liderleri</h4>
+            </div>
+            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Top BM</span>
+          </div>
+
+          <p class="text-[11px] text-slate-400">Platforma bilimsel katkı sunarak en çok BM puanı toplayan yazarlar:</p>
+
+          <div id="leaderboard-list" class="space-y-2.5">
+            <!-- JS ile en çok puan alanlar en üste sıralanacak -->
+          </div>
+        </div>
+
+        <!-- Puanlama Kuralları Bilgi Kartı -->
+        <div class="bg-surfaceCard/70 border border-borderSlate rounded-2xl p-4 text-xs space-y-2.5">
+          <h5 class="font-bold text-slate-200 flex items-center gap-1.5">
+            <i data-lucide="info" class="w-4 h-4 text-blue-400"></i> BM Puan Sistemi
+          </h5>
+          <ul class="space-y-1.5 text-[11px] text-slate-400">
+            <li class="flex items-center justify-between">
+              <span>📚 Bilimsel Makale:</span>
+              <span class="font-bold text-bmGold">+10.000 BM</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span>✍️ Blog Yazısı:</span>
+              <span class="font-bold text-emerald-400">+5.000 BM</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span>❓ Soru-Cevap:</span>
+              <span class="font-bold text-blue-400">+500 BM</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span>❤️ Beğeni Kazanma:</span>
+              <span class="font-bold text-pink-400">+3 BM / beğeni</span>
+            </li>
+          </ul>
+        </div>
+
+      </aside>
+
+    </div>
+
+  </div>
+
+  <!-- MOBİL ALT MENÜ -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surfaceDark/95 backdrop-blur-lg border-t border-borderSlate flex justify-around py-2.5 z-40">
+    <button onclick="goHome(); setFilter('all')" class="flex flex-col items-center gap-1 text-bmGold">
+      <i data-lucide="compass" class="w-5 h-5"></i>
+      <span class="text-[10px]">Keşfet</span>
+    </button>
+    <button onclick="goHome(); setFilter('makale')" class="flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="book-open" class="w-5 h-5"></i>
+      <span class="text-[10px]">Makale</span>
+    </button>
+    <button onclick="openPublishModal()" class="flex flex-col items-center justify-center -mt-6 w-12 h-12 bg-bmGold rounded-full shadow-lg shadow-amber-500/40 text-black font-black">
+      <i data-lucide="plus" class="w-6 h-6"></i>
+    </button>
+    <button onclick="goHome(); setFilter('podcast')" class="flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="mic" class="w-5 h-5"></i>
+      <span class="text-[10px]">Podcast</span>
+    </button>
+    <button onclick="openMyProfile()" class="flex flex-col items-center gap-1 text-slate-400">
+      <i data-lucide="user" class="w-5 h-5"></i>
+      <span class="text-[10px]">Profilim</span>
+    </button>
+  </nav>
+
+  <!-- GİRİŞ MODALI -->
+  <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-surfaceDark border border-borderSlate rounded-2xl w-full max-w-sm p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-white text-base">Giriş Yap / Üye Ol</h3>
+        <button onclick="closeModal('login-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <p class="text-xs text-slate-400">Yönetici girişi için <b>Mert</b> ve şifrenizi kullanın. Yeni isim girdiğinizde anında profiliniz oluşur.</p>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">Ad Soyad</label>
+          <input type="text" id="login-username" placeholder="Örn: Mert Canipek" class="w-full bg-surfaceCard border border-borderSlate rounded-xl p-2.5 text-white focus:outline-none focus:border-bmGold">
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Şifre</label>
+          <input type="password" id="login-password" placeholder="Şifreniz" class="w-full bg-surfaceCard border border-borderSlate rounded-xl p-2.5 text-white focus:outline-none focus:border-bmGold">
+        </div>
+        <p id="login-error" class="text-red-400 text-[11px] hidden"></p>
+        <button onclick="handleLogin()" class="w-full bg-bmGold hover:bg-amber-400 text-black font-bold py-2.5 rounded-xl transition">
+          Giriş Yap
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYLAŞIM MODALI -->
+  <div id="publish-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-surfaceDark border border-borderSlate rounded-2xl w-full max-w-xl p-6 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="feather" class="w-5 h-5 text-bmGold"></i>
+          <h3 class="font-bold text-white text-base">Bilimin Mirası'na Katkı Sun</h3>
+        </div>
+        <button onclick="closeModal('publish-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        <!-- Tür Seçimi -->
+        <div>
+          <label class="block text-slate-400 mb-1 font-semibold">İçerik Türü</label>
+          <select id="post-type" onchange="updatePublishRules()" class="w-full bg-surfaceCard border border-borderSlate rounded-xl p-2.5 text-white focus:outline-none focus:border-bmGold font-medium">
+            <option value="makale">📚 Bilimsel Makale (+10.000 BM Puanı) [Prof/Doç/Bilim İnsanı/Mert]</option>
+            <option value="blog">✍️ Blog Yazısı (+5.000 BM Puanı) [Herkes]</option>
+            <option value="soru">❓ Soru & Tartışma (+500 BM Puanı) [Herkes]</option>
+            <option value="podcast">🎙️ Podcast / Ses Kaydı (+5.000 BM Puanı)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1 font-semibold">Başlık *</label>
+          <input type="text" id="post-title" placeholder="İçeriğin başlığı..." class="w-full bg-surfaceCard border border-borderSlate rounded-xl p-2.5 text-white focus:outline-none focus:border-bmGold">
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1">Ortak Yazarlar / Katkı Sağlayanlar (İsteğe bağlı)</label>
+          <input type="text" id="post-coauthors" placeholder="Örn: Prof. Dr. Ayşe Yılmaz, Doç. Dr. Selin Kaya" class="w-full bg-surfaceCard border border-borderSlate rounded-xl p-2.5 text-white focus:outline-none focus:border-bmGold">
+        </div>
+
+        <!-- Galeriden Fotoğraf -->
+        <div>
+          <label class="block text-slate-400 mb-1 font-semibold">Kapak Fotoğrafı (Galeriden Seç) *</label>
+          <div class="flex items-center gap-3">
+            <label class="cursor-pointer flex items-center gap-2 bg-surfaceCard border border-borderSlate hover:border-bmGold text-slate-300 px-4 py-2.5 rounded-xl transition">
+              <i data-lucide="image-plus" class="w-4 h-4 text-bmGold"></i>
+              <span>Fotoğraf Yükle</span>
+              <input type="file" id="post-image-file" accept="image/*" class="hidden" onchange="handleImagePick(event)">
+            </label>
+            <span id="image-name-display" class="text-[11px] text-slate-400 truncate max-w-[200px]">Varsayılan atanacak</span>
+          </div>
+          <div id="image-preview-wrapper" class="hidden mt-2 relative w-full h-36 rounded-xl overflow-hidden border border-borderSlate">
+            <img id="image-preview" src="" class="w-full h-full object-cover" alt="Önizleme">
+          </div>
+        </div>
+
+        <div id="audio-input-field" class="hidden">
+          <label class="block text-slate-400 mb-1 font-semibold">Ses Kaydı / MP3 URL</label>
+          <input type="text" id="post-audio-url" placeholder="https://example.com/audio.mp3" class="w-full bg-surfaceCard border border-borderSlate rounded-xl p-2.5 text-white focus:outline-none focus:border-bmGold">
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1 font-semibold">İçerik Detayı *</label>
+          <textarea id="post-content" rows="4" placeholder="Metninizi yazın..." class="w-full bg-surfaceCard border border-borderSlate rounded-xl p-2.5 text-white focus:outline-none focus:border-bmGold"></textarea>
+        </div>
+
+        <!-- Kaynakça Alanı (Zorunluluk Kuralı) -->
+        <div id="citation-container" class="p-3 bg-surfaceCard border border-borderSlate rounded-xl space-y-1">
+          <div class="flex items-center justify-between">
+            <label class="block text-slate-300 font-bold">Kaynaklar & Literatür</label>
+            <span id="citation-badge" class="text-[10px] px-2 py-0.5 rounded font-bold"></span>
+          </div>
+          <textarea id="post-citations" rows="2" placeholder="Örn: 1. Nature Astronomy (2025), 2. Prof. Celal Şengör..." class="w-full bg-portalBg border border-borderSlate rounded-lg p-2 text-white focus:outline-none focus:border-bmGold"></textarea>
+          <p id="citation-note" class="text-[10px] text-slate-400"></p>
+        </div>
+
+        <button onclick="submitPost()" class="w-full bg-bmGold hover:bg-amber-400 text-black font-extrabold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+          <i data-lucide="check" class="w-4 h-4"></i> Yayınla & BM Puanı Kazan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tarih Gösterimi
+    document.getElementById('top-date-display').innerText = new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    // --- BAŞLANGIÇ VERİTABANI & PUANLAR ---
+    const INITIAL_USERS = [
+      { id: 'u1', name: 'Mert Canipek', username: 'Mert', role: 'Yönetici', bmScore: 68500, bio: 'Bilimin Mirası Platform Kurucusu & Yönetici' },
+      { id: 'u2', name: 'Prof. Dr. Celal Şengör', username: 'celal_sengor', role: 'Profesör', bmScore: 92400, bio: 'Jeoloji ve tektonik araştırmacısı.' },
+      { id: 'u3', name: 'Doç. Dr. Selin Kaya', username: 'selinkaya', role: 'Doçent', bmScore: 47200, bio: 'Moleküler biyoloji ve telomer araştırmaları.' },
+      { id: 'u4', name: 'Dr. Umut Yıldız', username: 'umutastro', role: 'Bilim İnsanı', bmScore: 38100, bio: 'Astrofizikçi, derin uzay iletişimi.' },
+      { id: 'u5', name: 'Alperen Demir', username: 'alperen', role: 'Blog Yazarı', bmScore: 16400, bio: 'Popüler bilim ve kuantum meraklısı.' },
+      { id: 'u6', name: 'Büşra Yılmaz', username: 'busra', role: 'Üye', bmScore: 3200, bio: 'Evren ve doğa gözlemcisi.' }
+    ];
+
+    const INITIAL_POSTS = [
+      {
+        id: 'p1',
+        title: 'Karanlık Enerji ve Evrenin Hızlanan Genişlemesi Üzerine Bulgular',
+        type: 'makale',
+        authorName: 'Prof. Dr. Celal Şengör',
+        authorUsername: 'celal_sengor',
+        coAuthors: 'Doç. Dr. Selin Kaya',
+        role: 'Profesör',
+        image: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80',
+        content: 'Tip Ia süpernova gözlemleri ve kozmik mikrodalga arka plan ışıması, evrenin genişleme hızının giderek arttığını kanıtlamaktadır...',
+        citations: '1. Riess et al., 1998, Observational Evidence for an Accelerating Universe\n2. Nature Physics 2024',
+        date: 'Bugün',
+        likes: 412
+      },
+      {
+        id: 'p2',
+        title: 'CRISPR-Cas9 ile Hücresel Yaşlanmayı Yavaşlatmak Mümkün mü?',
+        type: 'makale',
+        authorName: 'Doç. Dr. Selin Kaya',
+        authorUsername: 'selinkaya',
+        coAuthors: '',
+        role: 'Doçent',
+        image: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80',
+        content: 'Telomeraz enzim aktivasyonunun kontrollü olarak fare modellerinde test edilmesi, organ fonksiyonlarında canlanma olduğunu ortaya koydu.',
+        citations: 'Cell Metabolism, Cilt 32, Sayfa 450.',
+        date: 'Dün',
+        likes: 289
+      },
+      {
+        id: 'p3',
+        title: 'Bölüm #1: Zaman Algımız Neden İzafidir?',
+        type: 'podcast',
+        authorName: 'Mert Canipek',
+        authorUsername: 'Mert',
+        coAuthors: 'Miras Bilim Ekibi',
+        role: 'Yönetici',
+        image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80',
+        audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        content: 'Zamanın akışı yerçekimi alanında ve yüksek hızlarda neden değişir? Einstein\'ın denklemlerini sade dille konuşuyoruz.',
+        citations: 'Einstein, A. İzafiyet Teorisi.',
+        date: '2 gün önce',
+        likes: 310
+      },
+      {
+        id: 'p4',
+        title: 'Entropi Neden Sürekli Artmak Zorundadır?',
+        type: 'blog',
+        authorName: 'Alperen Demir',
+        authorUsername: 'alperen',
+        coAuthors: '',
+        role: 'Blog Yazarı',
+        image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+        content: 'Kahveye süt karıştırdığınızda neden kendiliğinden ayrışmaz? Termodinamiğin 2. Yasası evrenin nihai sonunu nasıl çiziyor?',
+        citations: 'Feynman Fizik Dersleri, Cilt 1.',
+        date: '3 gün önce',
+        likes: 95
+      }
+    ];
+
+    // Local Storage
+    let users = JSON.parse(localStorage.getItem('bm_users_v3')) || INITIAL_USERS;
+    let posts = JSON.parse(localStorage.getItem('bm_posts_v3')) || INITIAL_POSTS;
+    let currentUser = JSON.parse(localStorage.getItem('bm_current_user_v3')) || null;
+    let activeFilter = 'all';
+    let uploadedImageBase64 = null;
+
+    function saveState() {
+      localStorage.setItem('bm_users_v3', JSON.stringify(users));
+      localStorage.setItem('bm_posts_v3', JSON.stringify(posts));
+      localStorage.setItem('bm_current_user_v3', JSON.stringify(currentUser));
+    }
+
+    // --- YETKİ VE KAYNAK MUAFİYETİ ---
+    function isAcademicImmune(role) {
+      return role === 'Profesör' || role === 'Doçent';
+    }
+
+    function canPublishArticle(role) {
+      return ['Yönetici', 'Profesör', 'Doçent', 'Bilim İnsanı'].includes(role);
+    }
+
+    // --- PUAN VERME FONKSİYONU ---
+    function awardBMPoints(username, points) {
+      const u = users.find(x => x.username.toLowerCase() === username.toLowerCase());
+      if (u) {
+        u.bmScore = (u.bmScore || 0) + points;
+        if (currentUser && currentUser.username.toLowerCase() === username.toLowerCase()) {
+          currentUser.bmScore = u.bmScore;
+        }
+        saveState();
+        renderLeaderboard();
+      }
+    }
+
+    // --- PROFİL SAYFASINA GİTME ---
+    function viewProfile(username) {
+      const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+      if (!user) return;
+
+      document.getElementById('main-feed-view').classList.add('hidden');
+      document.getElementById('profile-view').classList.remove('hidden');
+
+      document.getElementById('profile-avatar').innerText = user.name.substring(0, 2).toUpperCase();
+      document.getElementById('profile-fullname').innerText = user.name;
+      document.getElementById('profile-role').innerText = user.role;
+      document.getElementById('profile-handle').innerText = '@' + user.username;
+      document.getElementById('profile-bio').innerText = user.bio || 'Bilimin Mirası üyesi.';
+      document.getElementById('profile-bm-score').innerText = (user.bmScore || 0).toLocaleString();
+
+      // Bu yazarın tüm içeriklerini çek
+      const authorPosts = posts.filter(p => p.authorUsername.toLowerCase() === user.username.toLowerCase());
+      const pGrid = document.getElementById('profile-posts-grid');
+
+      if (authorPosts.length === 0) {
+        pGrid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 text-xs">Bu yazar henüz bir içerik paylaşmadı.</div>`;
+      } else {
+        pGrid.innerHTML = authorPosts.map(p => generateCardHTML(p)).join('');
+      }
+      lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goHome() {
+      document.getElementById('profile-view').classList.add('hidden');
+      document.getElementById('main-feed-view').classList.remove('hidden');
+      renderFeed();
+    }
+
+    function openMyProfile() {
+      if (!currentUser) {
+        openAuthModal();
+      } else {
+        viewProfile(currentUser.username);
+      }
+    }
+
+    // --- KART HTML ÜRETİCİ ---
+    function generateCardHTML(item) {
+      let badge = 'bg-blue-500/10 text-blue-400 border-blue-500/30';
+      let typeLabel = 'Bilimsel Makale';
+      if (item.type === 'blog') { badge = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'; typeLabel = 'Blog'; }
+      if (item.type === 'soru') { badge = 'bg-amber-500/10 text-amber-400 border-amber-500/30'; typeLabel = 'Soru-Cevap'; }
+      if (item.type === 'podcast') { badge = 'bg-purple-500/10 text-purple-400 border-purple-500/30'; typeLabel = 'Podcast'; }
+
+      return `
+        <article class="bg-surfaceDark border border-borderSlate rounded-2xl overflow-hidden hover:border-bmGold/40 transition duration-300 flex flex-col justify-between group shadow-lg">
+          <div>
+            <div class="relative h-44 w-full overflow-hidden bg-slate-950">
+              <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+              <span class="absolute top-3 left-3 text-[10px] font-bold tracking-wide uppercase px-2.5 py-1 rounded-full border backdrop-blur-md ${badge}">
+                ${typeLabel}
+              </span>
+            </div>
+
+            <div class="p-4 space-y-2.5">
+              <h3 class="font-bold text-sm text-white group-hover:text-bmGold transition line-clamp-2 leading-snug">${item.title}</h3>
+              <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed">${item.content}</p>
+
+              ${item.type === 'podcast' ? `
+                <div class="mt-2 p-2 bg-surfaceCard rounded-xl border border-borderSlate">
+                  <div class="flex items-center gap-1.5 text-xs text-purple-300 font-bold mb-1">
+                    <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> Ses Kaydı Dinle
+                  </div>
+                  <audio controls class="w-full h-7" style="filter: invert(0.9) hue-rotate(180deg);">
+                    <source src="${item.audioUrl}" type="audio/mpeg">
+                  </audio>
+                </div>
+              ` : ''}
+
+              <!-- Kaynakça Kutusu -->
+              <div class="p-2 bg-surfaceCard/60 border border-borderSlate rounded-xl text-[10px]">
+                <span class="font-bold text-bmGold flex items-center gap-1">
+                  <i data-lucide="bookmark" class="w-3 h-3"></i> Kaynakça / Literatür:
+                </span>
+                <p class="text-slate-400 italic line-clamp-1 font-mono">${item.citations}</p>
+              </div>
+
+              ${item.coAuthors ? `
+                <p class="text-[10px] text-slate-400"><b class="text-bmGold">Ortak Yazarlar:</b> ${item.coAuthors}</p>
+              ` : ''}
+            </div>
+          </div>
+
+          <!-- Yazar Alt Kısmı (Profili açar) -->
+          <div class="px-4 py-3 bg-surfaceCard border-t border-borderSlate flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2 cursor-pointer group/author" onclick="viewProfile('${item.authorUsername}')">
+              <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-amber-600 to-blue-600 text-white font-bold text-[11px] flex items-center justify-center">
+                ${item.authorName.substring(0,1)}
+              </div>
+              <div>
+                <p class="font-bold text-slate-200 group-hover/author:text-bmGold transition leading-none">${item.authorName}</p>
+                <p class="text-[10px] text-bmGold font-semibold mt-0.5">${item.role}</p>
+              </div>
+            </div>
+
+            <button onclick="likeArticle('${item.id}', '${item.authorUsername}')" class="flex items-center gap-1 text-slate-400 hover:text-pink-400 transition" title="Beğen (+3 BM Puanı)">
+              <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+              <span class="text-[11px] font-bold">${item.likes}</span>
+            </button>
+          </div>
+        </article>
+      `;
+    }
+
+    // --- AKIŞI ÇİZME ---
+    function renderFeed() {
+      const container = document.getElementById('posts-container');
+      const search = document.getElementById('global-search').value.toLowerCase();
+
+      let filtered = posts.filter(p => {
+        const matchesFilter = (activeFilter === 'all') || (p.type === activeFilter);
+        const matchesSearch = p.title.toLowerCase().includes(search) || 
+                              p.authorName.toLowerCase().includes(search) || 
+                              p.content.toLowerCase().includes(search);
+        return matchesFilter && matchesSearch;
+      });
+
+      document.getElementById('feed-count-badge').innerText = `${filtered.length} içerik listeleniyor`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="col-span-full py-16 text-center text-slate-500 text-xs">Aramanıza uygun içerik bulunamadı.</div>`;
+      } else {
+        container.innerHTML = filtered.map(p => generateCardHTML(p)).join('');
+      }
+
+      renderLeaderboard();
+      renderUserBar();
+      lucide.createIcons();
+    }
+
+    // --- EN ÇOK BM PUANI OLANLAR (LİDERLİK TABLOSU) ---
+    function renderLeaderboard() {
+      const lList = document.getElementById('leaderboard-list');
+      // Kullanıcıları BM Puanına göre büyükten küçüğe sırala
+      const sorted = [...users].sort((a, b) => (b.bmScore || 0) - (a.bmScore || 0));
+
+      lList.innerHTML = sorted.slice(0, 5).map((u, index) => {
+        let medal = `<span class="text-xs font-bold text-slate-500 w-4">${index + 1}</span>`;
+        if (index === 0) medal = `<i data-lucide="crown" class="w-4 h-4 text-bmGold"></i>`;
+        if (index === 1) medal = `<span class="w-4 h-4 rounded-full bg-slate-300 text-black text-[10px] font-bold flex items-center justify-center">2</span>`;
+        if (index === 2) medal = `<span class="w-4 h-4 rounded-full bg-amber-700 text-white text-[10px] font-bold flex items-center justify-center">3</span>`;
+
+        return `
+          <div onclick="viewProfile('${u.username}')" class="flex items-center justify-between p-2 rounded-xl bg-surfaceCard/50 hover:bg-surfaceCard border border-borderSlate cursor-pointer transition">
+            <div class="flex items-center gap-2.5">
+              ${medal}
+              <div class="w-6 h-6 rounded-lg bg-blue-600/30 text-blue-300 text-[10px] font-bold flex items-center justify-center">
+                ${u.name.substring(0, 1)}
+              </div>
+              <div>
+                <p class="text-xs font-bold text-white hover:text-bmGold leading-none">${u.name}</p>
+                <p class="text-[9px] text-slate-400">${u.role}</p>
+              </div>
+            </div>
+            <span class="text-xs font-black text-bmGold">${(u.bmScore || 0).toLocaleString()} <span class="text-[9px]">BM</span></span>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    // --- BEĞENİ VE +3 BM PUANI ---
+    function likeArticle(postId, authorUsername) {
+      const p = posts.find(x => x.id === postId);
+      if (p) {
+        p.likes += 1;
+        // Yazara +3 BM puanı ver
+        awardBMPoints(authorUsername, 3);
+        saveState();
+        renderFeed();
+      }
+    }
+
+    // --- FOTOĞRAF SEÇME ---
+    function handleImagePick(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      document.getElementById('image-name-display').innerText = file.name;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedImageBase64 = e.target.result;
+        document.getElementById('image-preview').src = uploadedImageBase64;
+        document.getElementById('image-preview-wrapper').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // --- PAYLAŞIM VE PUAN EKLEME ---
+    function updatePublishRules() {
+      const type = document.getElementById('post-type').value;
+      const audioField = document.getElementById('audio-input-field');
+      const badge = document.getElementById('citation-badge');
+      const note = document.getElementById('citation-note');
+
+      if (type === 'podcast') {
+        audioField.classList.remove('hidden');
+      } else {
+        audioField.classList.add('hidden');
+      }
+
+      const role = currentUser ? currentUser.role : 'Üye';
+      if (isAcademicImmune(role)) {
+        badge.className = 'text-[10px] px-2 py-0.5 rounded font-bold bg-slate-800 text-slate-400';
+        badge.innerText = 'İsteğe Bağlı (Prof/Doç Muafiyeti)';
+        note.innerText = 'Profesör ve Doçentler kaynak belirtmeden de yayın yapabilir.';
+      } else {
+        badge.className = 'text-[10px] px-2 py-0.5 rounded font-bold bg-red-500/20 text-red-400 border border-red-500/30';
+        badge.innerText = 'ZORUNLU (Kaynak Girmelisiniz)';
+        note.innerText = 'Doçent ve Profesör olmayan üyelerin makale/yazılarında literatür ve kaynak belirtmesi mecburidir.';
+      }
+    }
+
+    function submitPost() {
+      if (!currentUser) {
+        alert('Lütfen önce giriş yapın.');
+        openAuthModal();
+        return;
+      }
+
+      let type = document.getElementById('post-type').value;
+      const title = document.getElementById('post-title').value.trim();
+      const coAuthors = document.getElementById('post-coauthors').value.trim();
+      const content = document.getElementById('post-content').value.trim();
+      const citations = document.getElementById('post-citations').value.trim();
+      const audioUrl = document.getElementById('post-audio-url').value.trim();
+
+      if (!title || !content) {
+        alert('Lütfen başlık ve içerik alanını doldurun.');
+        return;
+      }
+
+      // Makale yetki kontrolü
+      if (type === 'makale' && !canPublishArticle(currentUser.role)) {
+        alert(`Yetkiniz (${currentUser.role}) doğrudan Makale yayınlamak için yeterli değil. Yazınız Blog kategorisine alındı.`);
+        type = 'blog';
+      }
+
+      // Kaynakça kontrolü
+      if (!isAcademicImmune(currentUser.role) && !citations) {
+        alert('DİKKAT: Profesör veya Doçent olmadığınız için bu yazıda bilimsel kaynak / referans belirtmek ZORUNDASINIZ!');
+        document.getElementById('post-citations').focus();
+        return;
+      }
+
+      // BM Puanı Hesaplama:
+      let earnedPoints = 0;
+      if (type === 'makale') earnedPoints = 10000;
+      else if (type === 'blog') earnedPoints = 5000;
+      else if (type === 'soru') earnedPoints = 500;
+      else if (type === 'podcast') earnedPoints = 5000;
+
+      const finalImage = uploadedImageBase64 || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80';
+
+      const newPost = {
+        id: 'p_' + Date.now(),
+        title,
+        type,
+        authorName: currentUser.name,
+        authorUsername: currentUser.username,
+        coAuthors,
+        role: currentUser.role,
+        image: finalImage,
+        content,
+        citations: citations || 'Belirtilmedi (Akademik Muafiyet)',
+        audioUrl: audioUrl || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        date: 'Yeni paylaşıldı',
+        likes: 0
+      };
+
+      posts.unshift(newPost);
+      awardBMPoints(currentUser.username, earnedPoints);
+
+      closeModal('publish-modal');
+      // Formu temizle
+      document.getElementById('post-title').value = '';
+      document.getElementById('post-coauthors').value = '';
+      document.getElementById('post-content').value = '';
+      document.getElementById('post-citations').value = '';
+      uploadedImageBase64 = null;
+      document.getElementById('image-preview-wrapper').classList.add('hidden');
+      document.getElementById('image-name-display').innerText = 'Varsayılan atanacak';
+
+      renderFeed();
+      alert(`Harika! İçeriğiniz yayınlandı ve profilinize +${earnedPoints.toLocaleString()} BM Puanı eklendi!`);
+    }
+
+    // --- GİRİŞ & YÖNETİCİ PANELİ ---
+    function handleLogin() {
+      const uVal = document.getElementById('login-username').value.trim();
+      const pVal = document.getElementById('login-password').value.trim();
+      const err = document.getElementById('login-error');
+
+      if (!uVal) return;
+
+      if (uVal.toLowerCase() === 'mert') {
+        if (pVal !== '2626mert') {
+          err.innerText = 'Yönetici şifresi hatalı!';
+          err.classList.remove('hidden');
+          return;
+        }
+        currentUser = { id: 'admin_mert', name: 'Mert Canipek', username: 'Mert', role: 'Yönetici', bmScore: 68500, bio: 'Bilimin Mirası Platform Yöneticisi' };
+      } else {
+        let existing = users.find(u => u.username.toLowerCase() === uVal.toLowerCase() || u.name.toLowerCase() === uVal.toLowerCase());
+        if (!existing) {
+          existing = { id: 'u_' + Date.now(), name: uVal, username: uVal.toLowerCase().replace(/\s+/g, '_'), role: 'Üye', bmScore: 0, bio: 'Bilimin Mirası Topluluk Üyesi' };
+          users.push(existing);
+        }
+        currentUser = existing;
+      }
+
+      err.classList.add('hidden');
+      closeModal('login-modal');
+      saveState();
+      renderFeed();
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      saveState();
+      renderFeed();
+    }
+
+    function renderUserBar() {
+      const slot = document.getElementById('header-user-slot');
+      const adminPanel = document.getElementById('admin-panel');
+
+      if (currentUser) {
+        if (currentUser.username === 'Mert') {
+          adminPanel.classList.remove('hidden');
+          renderAdminTable();
+        } else {
+          adminPanel.classList.add('hidden');
+        }
+
+        slot.innerHTML = `
+          <div class="flex items-center gap-2 bg-surfaceCard border border-borderSlate px-2.5 py-1.5 rounded-xl">
+            <div onclick="viewProfile('${currentUser.username}')" class="flex items-center gap-2 cursor-pointer">
+              <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-600 to-blue-600 font-bold text-white text-xs flex items-center justify-center">
+                ${currentUser.name.substring(0, 1)}
+              </div>
+              <div class="hidden sm:block text-left">
+                <p class="text-xs font-bold text-white leading-none">${currentUser.name}</p>
+                <p class="text-[10px] text-bmGold font-bold">${(currentUser.bmScore || 0).toLocaleString()} BM</p>
+              </div>
+            </div>
+            <button onclick="handleLogout()" title="Çıkış" class="text-slate-400 hover:text-red-400 p-1">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+      } else {
+        adminPanel.classList.add('hidden');
+        slot.innerHTML = `
+          <button onclick="openAuthModal()" class="bg-surfaceCard hover:bg-slate-800 border border-borderSlate px-3.5 py-2 rounded-xl text-xs font-bold text-white transition">
+            Giriş Yap
+          </button>
+        `;
+      }
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('admin-table-body');
+      tbody.innerHTML = users.map(u => `
+        <tr class="hover:bg-surfaceCard/50">
+          <td class="p-3 font-semibold text-white">${u.name} <span class="text-slate-500 text-[10px]">(@${u.username})</span></td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded bg-slate-800 text-[11px] text-bmGold font-semibold">${u.role}</span></td>
+          <td class="p-3 font-mono font-bold text-amber-300">${(u.bmScore || 0).toLocaleString()} BM</td>
+          <td class="p-3">
+            <select onchange="updateUserRole('${u.id}', this.value)" class="bg-portalBg border border-borderSlate rounded-lg px-2 py-1 text-xs text-slate-200">
+              <option value="Üye" ${u.role === 'Üye' ? 'selected' : ''}>Üye</option>
+              <option value="Blog Yazarı" ${u.role === 'Blog Yazarı' ? 'selected' : ''}>Blog Yazarı</option>
+              <option value="Bilim İnsanı" ${u.role === 'Bilim İnsanı' ? 'selected' : ''}>Bilim İnsanı</option>
+              <option value="Doçent" ${u.role === 'Doçent' ? 'selected' : ''}>Doçent</option>
+              <option value="Profesör" ${u.role === 'Profesör' ? 'selected' : ''}>Profesör</option>
+              <option value="Yönetici" ${u.role === 'Yönetici' ? 'selected' : ''}>Yönetici</option>
+            </select>
+          </td>
+          <td class="p-3 font-bold ${isAcademicImmune(u.role) ? 'text-slate-500' : 'text-amber-400'}">
+            ${isAcademicImmune(u.role) ? 'Muaf' : 'Zorunlu'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateUserRole(userId, newRole) {
+      if (!currentUser || currentUser.username !== 'Mert') return;
+      const target = users.find(x => x.id === userId);
+      if (target) {
+        target.role = newRole;
+        saveState();
+        renderAdminTable();
+        renderFeed();
+      }
+    }
+
+    // Filtreler & Modallar
+    function setFilter(type) {
+      activeFilter = type;
+      renderFeed();
+    }
+    function filterByTag(tag) {
+      document.getElementById('global-search').value = tag;
+      renderFeed();
+    }
+    function handleSearch() {
+      renderFeed();
+    }
+    function openAuthModal() { document.getElementById('login-modal').classList.remove('hidden'); document.getElementById('login-modal').classList.add('flex'); }
+    function openPublishModal() { 
+      document.getElementById('publish-modal').classList.remove('hidden'); 
+      document.getElementById('publish-modal').classList.add('flex'); 
+      updatePublishRules();
+    }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+
+    // --- PWA ÇALIŞTIRICI ---
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+    let pwaPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      pwaPrompt = e;
+      const b = document.getElementById('pwa-install-btn');
+      b.classList.remove('hidden');
+      b.classList.add('flex');
+    });
+    document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+      if (pwaPrompt) {
+        pwaPrompt.prompt();
+        pwaPrompt = null;
+      }
+    });
+
+    // İlk Çalıştırma
+    renderFeed();
+  </script>
+</body>
+</html>
