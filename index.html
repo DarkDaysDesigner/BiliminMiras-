@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nöron Hub | Özgür Bilim & Düşünce Platformu</title>
+  <title>Bilimin Mirası | Akıl, Bilim ve Düşünce Platformu</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#070b14">
+  <meta name="theme-color" content="#060913">
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
@@ -14,11 +16,12 @@
       theme: {
         extend: {
           colors: {
-            brandDark: '#070b14',
-            panelDark: '#0c1222',
-            cardDark: '#121a2f',
+            brandDark: '#060913',
+            panelDark: '#0b1120',
+            cardDark: '#10192e',
             borderDark: '#1e293b',
-            accentBlue: '#2563eb'
+            accentBlue: '#2563eb',
+            goldMirasi: '#eab308'
           }
         }
       }
@@ -32,564 +35,404 @@
 <body class="bg-brandDark text-slate-200 min-h-screen flex flex-col font-sans antialiased pb-20 md:pb-0">
 
   <div class="flex flex-1">
-    <!-- Masaüstü Sol Menü (Sidebar) -->
-    <aside class="w-64 border-r border-borderDark bg-panelDark/80 backdrop-blur-md hidden md:flex flex-col justify-between p-5 sticky top-0 h-screen z-20">
+    <!-- Sol Masaüstü Menü -->
+    <aside class="w-64 border-r border-borderDark bg-panelDark/90 backdrop-blur-md hidden md:flex flex-col justify-between p-5 sticky top-0 h-screen z-20">
       <div>
         <!-- Logo -->
-        <div class="flex items-center gap-3 mb-8 cursor-pointer" onclick="switchTab('feed')">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-cyan-500 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
-            <i data-lucide="atom" class="w-6 h-6"></i>
+        <div class="flex items-center gap-3 mb-8 cursor-pointer" onclick="filterContent('all')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/10">
+            <i data-lucide="scroll" class="w-5 h-5 text-amber-200"></i>
           </div>
           <div>
-            <h1 class="font-bold text-lg tracking-wide text-white">NÖRON HUB</h1>
-            <p class="text-[11px] text-slate-400">Özgür Bilim Ekosistemi</p>
+            <h1 class="font-black text-lg tracking-wider text-white">BİLİMİN MİRASI</h1>
+            <p class="text-[10px] text-amber-400/90 font-medium">Akıl & Gelecek</p>
           </div>
         </div>
 
-        <!-- Gezinti Linkleri -->
+        <!-- Menü -->
         <nav class="space-y-1.5 text-sm">
-          <button onclick="filterContent('all')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-blue-600/10 text-blue-400 font-medium transition text-left">
-            <i data-lucide="layout-grid" class="w-4 h-4"></i> Tümü
+          <button onclick="filterContent('all')" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-blue-600/10 text-blue-400 font-medium transition text-left">
+            <i data-lucide="compass" class="w-4 h-4"></i> Keşfet (Tümü)
           </button>
-          <button onclick="filterContent('makale')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
-            <i data-lucide="book-open" class="w-4 h-4"></i> Makaleler <span class="ml-auto text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full font-bold">Akademik</span>
+          <button onclick="filterContent('makale')" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
+            <i data-lucide="book-marked" class="w-4 h-4"></i> Makaleler <span class="ml-auto text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">Doğrulanmış</span>
           </button>
-          <button onclick="filterContent('blog')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
-            <i data-lucide="file-text" class="w-4 h-4"></i> Bloglar
+          <button onclick="filterContent('blog')" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
+            <i data-lucide="newspaper" class="w-4 h-4"></i> Bloglar
           </button>
-          <button onclick="filterContent('soru')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
-            <i data-lucide="help-circle" class="w-4 h-4"></i> Soru & Cevap
+          <button onclick="filterContent('soru')" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
+            <i data-lucide="message-square-dashed" class="w-4 h-4"></i> Soru & Cevap
           </button>
-          <button onclick="filterContent('podcast')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
-            <i data-lucide="mic" class="w-4 h-4"></i> Podcast (Sesler)
+          <button onclick="filterContent('podcast')" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 transition text-left">
+            <i data-lucide="radio" class="w-4 h-4"></i> Podcast (Ses Kaydı)
           </button>
         </nav>
       </div>
 
-      <!-- Kullanıcı / Giriş Alanı -->
-      <div id="sidebar-auth-area" class="border-t border-borderDark pt-4">
-        <!-- JS ile dolacak -->
-      </div>
+      <!-- Kullanıcı Durumu -->
+      <div id="sidebar-user-box" class="border-t border-borderDark pt-4"></div>
     </aside>
 
-    <!-- Ana İçerik -->
+    <!-- Ana Akış -->
     <main class="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
-      <!-- Üst Bar -->
+      <!-- Üst Çubuk -->
       <header class="flex items-center justify-between gap-4 mb-6">
-        <div class="flex items-center gap-3 md:hidden">
-          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-            <i data-lucide="atom" class="w-5 h-5"></i>
+        <div class="flex items-center gap-2.5 md:hidden">
+          <div class="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center text-white">
+            <i data-lucide="scroll" class="w-4 h-4"></i>
           </div>
-          <span class="font-bold text-white text-base">Nöron Hub</span>
+          <span class="font-extrabold text-white text-base tracking-wide">BİLİMİN MİRASI</span>
         </div>
 
+        <!-- Arama Kutusu -->
         <div class="relative flex-1 max-w-md hidden sm:block">
           <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-          <input type="text" id="searchInput" oninput="searchPosts()" placeholder="Başlık, yazar veya konu ara..." class="w-full bg-panelDark border border-borderDark rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+          <input type="text" id="searchInput" oninput="renderFeed()" placeholder="Makale, yazar, doçent, konu ara..." class="w-full bg-panelDark border border-borderDark rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500 transition">
         </div>
 
         <div class="flex items-center gap-2">
-          <!-- PWA İndir Butonu -->
-          <button id="pwa-install-btn" class="hidden items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3 py-2 rounded-xl border border-borderDark transition">
-            <i data-lucide="download" class="w-4 h-4 text-blue-400"></i> <span class="hidden sm:inline">Uygulamayı İndir</span>
+          <!-- Mobil & Web Uygulama İndir Butonu (PWA) -->
+          <button id="pwa-install-btn" class="hidden items-center gap-2 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-black text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg shadow-amber-500/10 transition">
+            <i data-lucide="smartphone" class="w-4 h-4"></i> <span>Uygulamayı İndir</span>
           </button>
 
-          <!-- Yeni Paylaşım Butonu -->
-          <button onclick="openPublishModal()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-lg shadow-blue-600/20 transition">
-            <i data-lucide="plus" class="w-4 h-4"></i> <span class="hidden sm:inline">Paylaşım Yap</span>
+          <!-- Yeni İçerik Paylaş -->
+          <button onclick="openPublishModal()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg shadow-blue-600/20 transition">
+            <i data-lucide="plus" class="w-4 h-4"></i> <span class="hidden sm:inline">İçerik Yaz / Yükle</span>
           </button>
 
-          <button onclick="openAuthModal()" id="header-login-btn" class="bg-cardDark border border-borderDark px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white transition">
+          <!-- Giriş Butonu -->
+          <button onclick="openAuthModal()" id="header-login-btn" class="bg-cardDark border border-borderDark px-3.5 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white transition">
             Giriş Yap
           </button>
         </div>
       </header>
 
-      <!-- Sekmeler / Filtre Başlığı -->
+      <!-- Sekme Başlığı & Admin Rozeti -->
       <div class="flex items-center justify-between mb-6 pb-3 border-b border-borderDark">
         <div>
-          <h2 id="current-section-title" class="text-xl font-bold text-white">Keşfet & Akış</h2>
-          <p id="current-section-desc" class="text-xs text-slate-400">Makaleler, bloglar, soru-cevaplar ve podcast'ler</p>
+          <h2 id="feed-title" class="text-xl font-bold text-white">Genel Akış & Bilim Kütüphanesi</h2>
+          <p id="feed-desc" class="text-xs text-slate-400">Doğrulanmış makaleler, akademik incelemeler, bloglar ve sesli yayınlar</p>
         </div>
-        <div id="admin-badge-indicator" class="hidden">
-          <span class="text-xs font-semibold bg-red-500/10 border border-red-500/30 text-red-400 px-3 py-1 rounded-full flex items-center gap-1.5">
-            <i data-lucide="shield" class="w-3.5 h-3.5"></i> Mert (Yönetici)
+        <div id="admin-indicator" class="hidden">
+          <span class="text-xs font-bold bg-amber-500/10 border border-amber-500/40 text-amber-400 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Mert (Yönetici)
           </span>
         </div>
       </div>
 
-      <!-- İçerik Akışı Grid -->
-      <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- JS ile dolacak -->
-      </div>
+      <!-- İçerik Akışı Listesi -->
+      <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-      <!-- Yönetim Paneli (Sadece Mert giriş yapınca görünür) -->
-      <section id="admin-panel" class="hidden mt-12 bg-panelDark border border-red-500/30 rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
+      <!-- YÖNETİCİ PANELİ (Mert Giriş Yapınca Görünür) -->
+      <section id="admin-panel" class="hidden mt-12 bg-panelDark border border-amber-500/30 rounded-2xl p-6 shadow-2xl">
+        <div class="flex items-center justify-between mb-5">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center">
-              <i data-lucide="shield-alert" class="w-5 h-5"></i>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+              <i data-lucide="crown" class="w-6 h-6"></i>
             </div>
             <div>
               <h3 class="font-bold text-white text-base">Yönetici Paneli (Mert)</h3>
-              <p class="text-xs text-slate-400">Kullanıcılara rütbe vererek makale yazma izni tanıyın.</p>
+              <p class="text-xs text-slate-400">Yazarlara Doçent, Profesör ve Bilim İnsanı yetkisi verin.</p>
             </div>
           </div>
-          <span class="text-xs text-slate-400 bg-cardDark px-3 py-1 rounded-lg border border-borderDark">Tam Yetki</span>
+          <span class="text-[11px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-lg">Tam Sistem Denetimi</span>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-cardDark text-slate-400 border-b border-borderDark">
               <tr>
-                <th class="p-3">Kullanıcı</th>
-                <th class="p-3">Mevcut Rütbe</th>
-                <th class="p-3">Yetkiyi Değiştir</th>
-                <th class="p-3">Makale Yetkisi?</th>
+                <th class="p-3">Adı Soyadı / Kullanıcı</th>
+                <th class="p-3">Mevcut Ünvan</th>
+                <th class="p-3">Yetkiyi Güncelle</th>
+                <th class="p-3">Makale İzni</th>
+                <th class="p-3">Kaynak Zorunluluğu</th>
               </tr>
             </thead>
-            <tbody id="user-management-table" class="divide-y divide-borderDark text-slate-300">
-              <!-- JS ile kullanıcılar buraya gelir -->
-            </tbody>
+            <tbody id="user-admin-list" class="divide-y divide-borderDark text-slate-300"></tbody>
           </table>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- Mobil Alt Menü (Bottom Navigation) -->
+  <!-- Mobil Alt Navigasyon Barı -->
   <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-panelDark/95 backdrop-blur-lg border-t border-borderDark flex justify-around py-2.5 z-30">
-    <button onclick="filterContent('all')" class="flex flex-col items-center gap-1 text-blue-400">
-      <i data-lucide="layout-grid" class="w-5 h-5"></i>
-      <span class="text-[10px]">Akış</span>
+    <button onclick="filterContent('all')" class="flex flex-col items-center gap-1 text-amber-400">
+      <i data-lucide="compass" class="w-5 h-5"></i>
+      <span class="text-[10px]">Keşfet</span>
     </button>
     <button onclick="filterContent('makale')" class="flex flex-col items-center gap-1 text-slate-400">
-      <i data-lucide="book-open" class="w-5 h-5"></i>
+      <i data-lucide="book-marked" class="w-5 h-5"></i>
       <span class="text-[10px]">Makale</span>
     </button>
-    <button onclick="openPublishModal()" class="flex flex-col items-center justify-center -mt-5 w-11 h-11 bg-blue-600 rounded-full shadow-lg shadow-blue-600/40 text-white">
-      <i data-lucide="plus" class="w-5 h-5"></i>
+    <button onclick="openPublishModal()" class="flex flex-col items-center justify-center -mt-5 w-12 h-12 bg-amber-500 rounded-full shadow-lg shadow-amber-500/40 text-black font-bold">
+      <i data-lucide="plus" class="w-6 h-6"></i>
     </button>
     <button onclick="filterContent('podcast')" class="flex flex-col items-center gap-1 text-slate-400">
-      <i data-lucide="mic" class="w-5 h-5"></i>
+      <i data-lucide="radio" class="w-5 h-5"></i>
       <span class="text-[10px]">Podcast</span>
     </button>
     <button onclick="filterContent('soru')" class="flex flex-col items-center gap-1 text-slate-400">
-      <i data-lucide="help-circle" class="w-5 h-5"></i>
+      <i data-lucide="message-square-dashed" class="w-5 h-5"></i>
       <span class="text-[10px]">Soru-Cevap</span>
     </button>
   </nav>
 
-  <!-- Giriş Yap Modalı -->
-  <div id="login-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+  <!-- Giriş Modalı -->
+  <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="bg-panelDark border border-borderDark rounded-2xl w-full max-w-sm p-6 space-y-4">
       <div class="flex items-center justify-between">
         <h3 class="font-bold text-white text-base">Giriş Yap</h3>
         <button onclick="closeModal('login-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <p class="text-xs text-slate-400">Yönetici girişi için <b>Mert</b> ve şifrenizi kullanın ya da dilediğiniz bir takma adla üye olarak devam edin.</p>
+      <p class="text-xs text-slate-400">Yönetici hesabı için <b>Mert</b> ve şifrenizle giriş yapabilirsiniz.</p>
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block text-slate-400 mb-1">Kullanıcı Adı</label>
-          <input type="text" id="login-username" placeholder="Örn: Mert veya Can" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+          <label class="block text-slate-400 mb-1">Ad Soyad veya Kullanıcı Adı</label>
+          <input type="text" id="login-username" placeholder="Örn: Mert Canipek" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500">
         </div>
         <div>
           <label class="block text-slate-400 mb-1">Şifre</label>
-          <input type="password" id="login-password" placeholder="Şifreniz" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+          <input type="password" id="login-password" placeholder="Şifreniz" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500">
         </div>
         <p id="login-error" class="text-red-400 text-[11px] hidden"></p>
-        <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl transition">
+        <button onclick="handleLogin()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2.5 rounded-xl transition">
           Giriş Yap
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Paylaşım Modalı -->
-  <div id="publish-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-panelDark border border-borderDark rounded-2xl w-full max-w-lg p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+  <!-- PAYLAŞIM / YAZI EKLEME MODALI -->
+  <div id="publish-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-panelDark border border-borderDark rounded-2xl w-full max-w-xl p-6 space-y-4 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between">
-        <h3 class="font-bold text-white text-base">İçerik Paylaş</h3>
+        <div class="flex items-center gap-2">
+          <i data-lucide="feather" class="w-5 h-5 text-amber-400"></i>
+          <h3 class="font-bold text-white text-base">Yeni Bilimsel İçerik Üret</h3>
+        </div>
         <button onclick="closeModal('publish-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <div class="space-y-3 text-xs">
+      <div class="space-y-3.5 text-xs">
+        <!-- İçerik Türü -->
         <div>
-          <label class="block text-slate-400 mb-1">İçerik Türü</label>
-          <select id="post-type" onchange="checkPublishPermissions()" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
-            <option value="blog">✍️ Blog Yazısı (Tüm Üyeler)</option>
-            <option value="soru">❓ Soru & Cevap (Tüm Üyeler)</option>
-            <option value="podcast">🎙️ Podcast / Ses Kaydı (Tüm Üyeler)</option>
-            <option value="makale">📚 Bilimsel Makale (Sadece Profesör / Doçent / Bilim İnsanı / Yönetici)</option>
+          <label class="block text-slate-400 mb-1">İçerik Kategorisi</label>
+          <select id="post-type" onchange="updateFormRules()" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500 font-medium">
+            <option value="makale">📚 Bilimsel Makale (Yetki Gerektirir: Prof, Doç, Bilim İnsanı, Yönetici)</option>
+            <option value="blog">✍️ Bilim Bloğu (Herkes Yazabilir)</option>
+            <option value="soru">❓ Soru & Tartışma (Topluluk)</option>
+            <option value="podcast">🎙️ Podcast & Sesli Anlatım</option>
           </select>
         </div>
 
-        <div id="makale-warning" class="hidden p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[11px]">
-          ⚠️ <b>Yetki Kısıtlaması:</b> Makale yayınlayabilmek için Yönetici (Mert) tarafından <b>Profesör</b>, <b>Doçent</b> veya <b>Bilim İnsanı</b> olarak onaylanmanız gerekir. Mevcut yetkiniz yetersizse yazınız Blog olarak paylaşılacaktır.
-        </div>
-
+        <!-- Başlık -->
         <div>
-          <label class="block text-slate-400 mb-1">Başlık</label>
-          <input type="text" id="post-title" placeholder="İçeriğin çarpıcı başlığı..." class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
+          <label class="block text-slate-400 mb-1 font-semibold">Başlık *</label>
+          <input type="text" id="post-title" placeholder="Örn: Nöral Ağlar ve Kuantum Mekaniği Arasındaki Bağlar" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500">
         </div>
 
-        <div id="audio-input-area" class="hidden">
-          <label class="block text-slate-400 mb-1">Ses Dosyası / Podcast URL (MP3 veya Web Sesi)</label>
-          <input type="text" id="post-audio-url" placeholder="https://example.com/audio.mp3" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500">
-          <p class="text-[10px] text-slate-500 mt-1">Örnek test sesi için boş bırakırsanız otomatik örnek ses atanır.</p>
+        <!-- Ortak Makale / Çoklu Yazar Kısmı -->
+        <div id="coauthors-box">
+          <label class="block text-slate-400 mb-1">Ortak Yazarlar / Katkı Sağlayanlar (İsteğe bağlı)</label>
+          <input type="text" id="post-coauthors" placeholder="Örn: Prof. Dr. Zeynep Arslan, Doç. Dr. Selin Kaya" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500">
+          <span class="text-[10px] text-slate-500">İsim ve soyisimle beraber virgülle ayırarak yazabilirsiniz.</span>
         </div>
 
+        <!-- Fotoğraf Yükleme (Galeriden / Dosyadan) -->
         <div>
-          <label class="block text-slate-400 mb-1">İçerik Detayı / Açıklama</label>
-          <textarea id="post-content" rows="4" placeholder="Metninizi veya sorunuzu detaylandırın..." class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-blue-500"></textarea>
+          <label class="block text-slate-400 mb-1 font-semibold">Kapak / Makale Fotoğrafı (Galeriden Seç) *</label>
+          <div class="flex items-center gap-3">
+            <label class="cursor-pointer flex items-center gap-2 bg-cardDark border border-borderDark hover:border-amber-500 text-slate-300 px-4 py-2.5 rounded-xl transition">
+              <i data-lucide="image-plus" class="w-4 h-4 text-amber-400"></i>
+              <span>Fotoğraf Yükle</span>
+              <input type="file" id="post-image-file" accept="image/*" class="hidden" onchange="previewSelectedImage(event)">
+            </label>
+            <span id="image-filename" class="text-[11px] text-slate-400 truncate max-w-[200px]">Fotoğraf seçilmedi (Varsayılan atanır)</span>
+          </div>
+          <div id="image-preview-container" class="hidden mt-2 relative w-full h-36 rounded-xl overflow-hidden border border-borderDark">
+            <img id="image-preview" src="" class="w-full h-full object-cover" alt="Önizleme">
+          </div>
         </div>
 
-        <button onclick="handlePublish()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl transition">
-          Yayınla
+        <!-- Podcast Ses Dosyası Alanı -->
+        <div id="audio-field" class="hidden">
+          <label class="block text-slate-400 mb-1 font-semibold">Ses Kaydı / Podcast URL</label>
+          <input type="text" id="post-audio-url" placeholder="https://ornek.com/ses.mp3" class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <!-- İçerik Metni -->
+        <div>
+          <label class="block text-slate-400 mb-1 font-semibold">İçerik Detayı / Makale Metni *</label>
+          <textarea id="post-content" rows="5" placeholder="Bilimsel incelemenizi, bulgularınızı veya sorunuzu yazın..." class="w-full bg-cardDark border border-borderDark rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <!-- ZORUNLU KAYNAKÇA / REFERANS ALANI -->
+        <div id="citation-box" class="p-3.5 bg-cardDark/90 border border-borderDark rounded-xl space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label id="citation-label" class="block text-slate-300 font-bold">Kaynaklar & Literatür</label>
+            <span id="citation-badge" class="text-[10px] px-2 py-0.5 rounded font-bold"></span>
+          </div>
+          <textarea id="post-citations" rows="2" placeholder="Örn: 1. Nature Journal (2024), 2. Hawking, S. - Zamanın Kısa Tarihi s.45" class="w-full bg-brandDark border border-borderDark rounded-lg p-2 text-white focus:outline-none focus:border-amber-500"></textarea>
+          <p id="citation-helper" class="text-[10px] text-slate-500 leading-relaxed"></p>
+        </div>
+
+        <button onclick="publishArticle()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition shadow-lg shadow-amber-500/20 text-sm flex items-center justify-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4"></i> Bilimin Mirası'na Ekle
         </button>
       </div>
     </div>
   </div>
 
   <script>
-    // --- VERİTABANI & STATE YÖNETİMİ ---
+    // --- VERİTABANI & BAŞLANGIÇ VERİLERİ ---
     const DEFAULT_USERS = [
-      { id: '1', username: 'Mert', role: 'Yönetici' },
-      { id: '2', username: 'Dr. Zeynep', role: 'Profesör' },
-      { id: '3', username: 'Ahmet_Kaya', role: 'Doçent' },
-      { id: '4', username: 'Selin99', role: 'Bilim İnsanı' },
-      { id: '5', username: 'MerakliGenc', role: 'Blog Yazarı' },
-      { id: '6', username: 'EvrenYolcusu', role: 'Üye' }
+      { id: '1', name: 'Mert Canipek', username: 'Mert', role: 'Yönetici' },
+      { id: '2', name: 'Prof. Dr. İlber Ortaylı', username: 'ilber_hoca', role: 'Profesör' },
+      { id: '3', name: 'Doç. Dr. Selin Kaya', username: 'selinkaya', role: 'Doçent' },
+      { id: '4', name: 'Dr. Umut Yıldız', username: 'umut_astro', role: 'Bilim İnsanı' },
+      { id: '5', name: 'Alperen Demir', username: 'alperen_d', role: 'Blog Yazarı' },
+      { id: '6', name: 'Büşra Yılmaz', username: 'busra_y', role: 'Üye' }
     ];
 
     const DEFAULT_POSTS = [
       {
-        id: '1',
-        title: 'Karanlık Madde ve Galaktik Dönme Eğrileri Üzerine İnceleme',
+        id: '101',
+        title: 'James Webb ile Erken Evren Galaksilerinin Oluşumu ve Kozmolojik Sapmalar',
         type: 'makale',
-        author: 'Dr. Zeynep',
+        author: 'Prof. Dr. İlber Ortaylı',
+        coAuthors: 'Doç. Dr. Selin Kaya, Dr. Umut Yıldız',
         role: 'Profesör',
-        content: 'Galaksilerin sarmal kollarındaki dönüş hızları, görünür kütlenin açıkladığından çok daha fazlasına işaret etmektedir...',
+        image: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80',
+        content: 'James Webb Uzay Teleskobu verileri, Büyük Patlama\'dan sonraki ilk 500 milyon yılda var olan galaksilerin beklenenden çok daha parlak ve devasa kütleli olduğunu göstermiştir. Bu durum Standart Lambda-CDM kozmoloji modelini sarsmaktadır...',
+        citations: '1. NASA JWST Deep Field Release 2024\n2. Nature Astronomy, Cilt 18, s. 112-120',
         date: 'Bugün',
-        likes: 124
+        likes: 312
       },
       {
-        id: '2',
-        title: 'Bilinç Nedir? Nörolojik Bir Bakış Açısı',
-        type: 'blog',
-        author: 'MerakliGenc',
-        role: 'Blog Yazarı',
-        content: 'Beynimizdeki milyarlarca nöron nasıl oluyor da bir benlik hissi yaratıyor? İşte son okuduğum kitaptan aldığım notlar.',
+        id: '102',
+        title: 'Hücresel Yaşlanma ve Telomeraz Aktivitesinin Genetik Mühendisliğiyle Uzatılması',
+        type: 'makale',
+        author: 'Doç. Dr. Selin Kaya',
+        coAuthors: '',
+        role: 'Doçent',
+        image: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=800&q=80',
+        content: 'Telomer kısalması hücre bölünmesinin doğal bir biyolojik saati olarak bilinir. Yeni CRISPR tabanlı epigenetik düzenlemeler telomer uzunluğunu koruyarak doku dejenerasyonunu durdurmayı hedefliyor.',
+        citations: 'Cell Biology Review 2025; Telomere Dynamics in Mammals.',
         date: 'Dün',
-        likes: 42
+        likes: 198
       },
       {
-        id: '3',
-        title: 'Evrenin Genişleme Hızı Neden Artıyor?',
-        type: 'soru',
-        author: 'EvrenYolcusu',
-        role: 'Üye',
-        content: 'Hubble sabiti konusundaki uyumsuzluklar tam olarak ne anlama geliyor? Fizikçi arkadaşlar aydınlatabilir mi?',
-        date: '2 gün önce',
-        likes: 19
-      },
-      {
-        id: '4',
-        title: 'Bölüm #1: Kuantum Dolanıklık ve Zaman Algısı',
+        id: '103',
+        title: 'Podcast #1: İzafiyet Teorisi Neden Sezgilerimize Aykırıdır?',
         type: 'podcast',
-        author: 'Mert',
+        author: 'Mert Canipek',
+        coAuthors: 'Bilimin Mirası Ekibi',
         role: 'Yönetici',
+        image: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80',
         audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-        content: 'Bu podcast kaydında Einstein’ın "uzaktan hayaletsi etki" dediği dolanıklık fenomenini ele aldık.',
-        date: 'Bugün',
-        likes: 88
+        content: 'Bu kayıtta Einstein\'ın Genel ve Özel Görelilik teorilerini, zaman genleşmesini ve gündelik mantığımızın neden ışık hızında iflas ettiğini tartıştık.',
+        citations: 'Einstein, A. (1915). Zur allgemeinen Relativitätstheorie.',
+        date: '2 gün önce',
+        likes: 245
+      },
+      {
+        id: '104',
+        title: 'Termodinamiğin İkinci Yasası ve Entropi Günlük Hayatta Nasıl İşler?',
+        type: 'blog',
+        author: 'Alperen Demir',
+        coAuthors: '',
+        role: 'Blog Yazarı',
+        image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+        content: 'Düzensizliğin daima artma eğiliminde olması fiziksel olduğu kadar felsefi açıdan da evrendeki tüm süreçleri belirleyen en sert kuraldır.',
+        citations: 'Feynman Fizik Dersleri Cilt 1, Termodinamik Bölümü.',
+        date: '3 gün önce',
+        likes: 85
       }
     ];
 
-    // LocalStorage Yükleme
-    let users = JSON.parse(localStorage.getItem('noron_users')) || DEFAULT_USERS;
-    let posts = JSON.parse(localStorage.getItem('noron_posts')) || DEFAULT_POSTS;
-    let currentUser = JSON.parse(localStorage.getItem('noron_current_user')) || null;
-    let currentFilter = 'all';
+    // Local Storage & State
+    let users = JSON.parse(localStorage.getItem('bm_users')) || DEFAULT_USERS;
+    let posts = JSON.parse(localStorage.getItem('bm_posts')) || DEFAULT_POSTS;
+    let currentUser = JSON.parse(localStorage.getItem('bm_current_user')) || null;
+    let activeFilter = 'all';
+    let uploadedImageBase64 = null;
 
-    function saveData() {
-      localStorage.setItem('noron_users', JSON.stringify(users));
-      localStorage.setItem('noron_posts', JSON.stringify(posts));
-      localStorage.setItem('noron_current_user', JSON.stringify(currentUser));
+    function saveState() {
+      localStorage.setItem('bm_users', JSON.stringify(users));
+      localStorage.setItem('bm_posts', JSON.stringify(posts));
+      localStorage.setItem('bm_current_user', JSON.stringify(currentUser));
     }
 
-    // --- RÜTBE ROLLERİ & MAKALE İZNİ ---
-    const ACADEMIC_ROLES = ['Yönetici', 'Profesör', 'Doçent', 'Bilim İnsanı'];
+    // --- YETKİ KONTROLÜ ---
+    // Sadece Profesör ve Doçent kaynak zorunluluğundan muaftır
+    function isAcademicImmune(role) {
+      return role === 'Profesör' || role === 'Doçent';
+    }
 
+    // Makale yayınlama yetkisi olanlar
     function canPublishArticle(role) {
-      return ACADEMIC_ROLES.includes(role);
+      return ['Yönetici', 'Profesör', 'Doçent', 'Bilim İnsanı'].includes(role);
     }
 
-    // --- ARAYÜZ YENİLEME ---
-    function render() {
-      renderAuth();
-      renderPosts();
-      renderAdminTable();
-      lucide.createIcons();
-    }
+    // --- GALERİDEN FOTOĞRAF SEÇME VE ÖNİZLEME ---
+    function previewSelectedImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
 
-    function renderAuth() {
-      const sidebarAuth = document.getElementById('sidebar-auth-area');
-      const headerLoginBtn = document.getElementById('header-login-btn');
-      const adminBadge = document.getElementById('admin-badge-indicator');
-      const adminPanel = document.getElementById('admin-panel');
-
-      if (currentUser) {
-        headerLoginBtn.classList.add('hidden');
-        if (currentUser.username === 'Mert') {
-          adminBadge.classList.remove('hidden');
-          adminPanel.classList.remove('hidden');
-        } else {
-          adminBadge.classList.add('hidden');
-          adminPanel.classList.add('hidden');
-        }
-
-        sidebarAuth.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-full bg-blue-600/30 border border-blue-500 flex items-center justify-center font-bold text-xs text-blue-300">
-                ${currentUser.username.substring(0,2).toUpperCase()}
-              </div>
-              <div>
-                <p class="text-xs font-bold text-white">${currentUser.username}</p>
-                <p class="text-[10px] text-blue-400 font-semibold">${currentUser.role}</p>
-              </div>
-            </div>
-            <button onclick="handleLogout()" title="Çıkış Yap" class="text-slate-500 hover:text-red-400">
-              <i data-lucide="log-out" class="w-4 h-4"></i>
-            </button>
-          </div>
-        `;
-      } else {
-        headerLoginBtn.classList.remove('hidden');
-        adminBadge.classList.add('hidden');
-        adminPanel.classList.add('hidden');
-        sidebarAuth.innerHTML = `
-          <button onclick="openAuthModal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-xl text-xs flex items-center justify-center gap-2 transition">
-            <i data-lucide="log-in" class="w-4 h-4"></i> Giriş Yap
-          </button>
-        `;
+      document.getElementById('image-filename').innerText = file.name;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedImageBase64 = e.target.result;
+        const imgEl = document.getElementById('image-preview');
+        imgEl.src = uploadedImageBase64;
+        document.getElementById('image-preview-container').classList.remove('hidden');
       }
+      reader.readAsDataURL(file);
     }
 
-    function renderPosts() {
-      const container = document.getElementById('posts-container');
-      const search = document.getElementById('searchInput').value.toLowerCase();
-
-      let filtered = posts.filter(p => {
-        const matchesFilter = (currentFilter === 'all') || (p.type === currentFilter);
-        const matchesSearch = p.title.toLowerCase().includes(search) || 
-                              p.author.toLowerCase().includes(search) || 
-                              p.content.toLowerCase().includes(search);
-        return matchesFilter && matchesSearch;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="col-span-full py-16 text-center text-slate-500">
-            <i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2 opacity-50"></i>
-            <p class="text-sm">Bu kategoride henüz bir paylaşım bulunmuyor.</p>
-          </div>
-        `;
-        lucide.createIcons();
-        return;
-      }
-
-      container.innerHTML = filtered.map(post => {
-        // Tip Rozetleri
-        let badgeColor = 'bg-blue-500/10 text-blue-400 border-blue-500/30';
-        let typeLabel = 'Makale';
-        if (post.type === 'blog') { badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'; typeLabel = 'Blog'; }
-        if (post.type === 'soru') { badgeColor = 'bg-amber-500/10 text-amber-400 border-amber-500/30'; typeLabel = 'Soru & Cevap'; }
-        if (post.type === 'podcast') { badgeColor = 'bg-purple-500/10 text-purple-400 border-purple-500/30'; typeLabel = 'Podcast'; }
-
-        return `
-          <div class="bg-panelDark border border-borderDark rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition space-y-4">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-3">
-                <span class="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full border ${badgeColor}">
-                  ${typeLabel}
-                </span>
-                <span class="text-[11px] text-slate-500">${post.date}</span>
-              </div>
-              <h3 class="font-bold text-base text-white hover:text-blue-400 cursor-pointer transition leading-snug mb-2">${post.title}</h3>
-              <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed">${post.content}</p>
-              
-              ${post.type === 'podcast' ? `
-                <div class="mt-3 p-2.5 bg-cardDark rounded-xl border border-borderDark">
-                  <div class="flex items-center gap-2 mb-1.5 text-xs text-purple-300 font-semibold">
-                    <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> Ses Kaydı Dinle
-                  </div>
-                  <audio controls class="w-full h-8" style="filter: invert(0.9) hue-rotate(180deg);">
-                    <source src="${post.audioUrl || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'}" type="audio/mpeg">
-                  </audio>
-                </div>
-              ` : ''}
-            </div>
-
-            <div class="flex items-center justify-between pt-3 border-t border-borderDark/60 text-xs">
-              <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded-full bg-slate-800 text-[10px] flex items-center justify-center font-bold text-slate-300">
-                  ${post.author.substring(0,1)}
-                </div>
-                <div>
-                  <span class="font-medium text-slate-300">${post.author}</span>
-                  <span class="text-[10px] text-blue-400 block -mt-0.5">${post.role}</span>
-                </div>
-              </div>
-              <button onclick="likePost('${post.id}')" class="flex items-center gap-1 text-slate-400 hover:text-red-400 transition">
-                <i data-lucide="heart" class="w-3.5 h-3.5"></i>
-                <span class="text-[11px]">${post.likes}</span>
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      lucide.createIcons();
-    }
-
-    function renderAdminTable() {
-      const tbody = document.getElementById('user-management-table');
-      tbody.innerHTML = users.map(u => `
-        <tr class="hover:bg-cardDark/50">
-          <td class="p-3 font-semibold text-white">${u.username}</td>
-          <td class="p-3"><span class="px-2 py-0.5 rounded bg-slate-800 text-[11px] text-blue-300">${u.role}</span></td>
-          <td class="p-3">
-            <select onchange="changeRole('${u.id}', this.value)" class="bg-brandDark border border-borderDark rounded px-2 py-1 text-xs text-slate-300">
-              <option value="Üye" ${u.role === 'Üye' ? 'selected' : ''}>Üye</option>
-              <option value="Blog Yazarı" ${u.role === 'Blog Yazarı' ? 'selected' : ''}>Blog Yazarı</option>
-              <option value="Bilim İnsanı" ${u.role === 'Bilim İnsanı' ? 'selected' : ''}>Bilim İnsanı</option>
-              <option value="Doçent" ${u.role === 'Doçent' ? 'selected' : ''}>Doçent</option>
-              <option value="Profesör" ${u.role === 'Profesör' ? 'selected' : ''}>Profesör</option>
-              <option value="Yönetici" ${u.role === 'Yönetici' ? 'selected' : ''}>Yönetici</option>
-            </select>
-          </td>
-          <td class="p-3 font-bold ${canPublishArticle(u.role) ? 'text-emerald-400' : 'text-slate-500'}">
-            ${canPublishArticle(u.role) ? '✓ Makale Yazabilir' : '✗ Sadece Blog'}
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    // --- ETKİLEŞİMLER & FİLTRELER ---
-    function filterContent(type) {
-      currentFilter = type;
-      const titles = {
-        'all': { t: 'Keşfet & Akış', d: 'Makaleler, bloglar, soru-cevaplar ve podcastler' },
-        'makale': { t: 'Bilimsel Makaleler', d: 'Sadece Profesör, Doçent ve Bilim İnsanlarının akademik yazıları' },
-        'blog': { t: 'Topluluk Blogları', d: 'Bilim meraklılarının ve yazarların paylaşımları' },
-        'soru': { t: 'Soru & Cevap', d: 'Merak edilenleri sorun, bilim insanları cevaplasın' },
-        'podcast': { t: 'Bilim Podcastleri', d: 'Sesli makaleler ve ses kayıtları' }
-      };
-      document.getElementById('current-section-title').innerText = titles[type].t;
-      document.getElementById('current-section-desc').innerText = titles[type].d;
-      renderPosts();
-    }
-
-    function searchPosts() {
-      renderPosts();
-    }
-
-    function likePost(id) {
-      const p = posts.find(item => item.id === id);
-      if (p) {
-        p.likes += 1;
-        saveData();
-        renderPosts();
-      }
-    }
-
-    // --- ROL DEĞİŞTİRME (MERT YÖNETİCİ KONTROLÜ) ---
-    function changeRole(userId, newRole) {
-      if (!currentUser || currentUser.username !== 'Mert') {
-        alert('Bu işlemi yalnızca Yönetici Mert yapabilir!');
-        return;
-      }
-      const u = users.find(item => item.id === userId);
-      if (u) {
-        u.role = newRole;
-        saveData();
-        render();
-      }
-    }
-
-    // --- GİRİŞ / ÇIKIŞ İŞLEMLERİ ---
-    function handleLogin() {
-      const uInput = document.getElementById('login-username').value.trim();
-      const pInput = document.getElementById('login-password').value.trim();
-      const err = document.getElementById('login-error');
-
-      if (!uInput) return;
-
-      // Özel Yönetici Girişi Kontrolü
-      if (uInput.toLowerCase() === 'mert') {
-        if (pInput !== '2626mert') {
-          err.innerText = 'Yönetici şifresi hatalı!';
-          err.classList.remove('hidden');
-          return;
-        }
-        currentUser = { id: 'admin_mert', username: 'Mert', role: 'Yönetici' };
-      } else {
-        // Normal Üye Girişi / Otomatik Kayıt
-        let existing = users.find(u => u.username.toLowerCase() === uInput.toLowerCase());
-        if (!existing) {
-          existing = { id: Date.now().toString(), username: uInput, role: 'Üye' };
-          users.push(existing);
-        }
-        currentUser = existing;
-      }
-
-      err.classList.add('hidden');
-      closeModal('login-modal');
-      saveData();
-      render();
-    }
-
-    function handleLogout() {
-      currentUser = null;
-      saveData();
-      render();
-    }
-
-    // --- PAYLAŞIM YAPMA ---
-    function checkPublishPermissions() {
+    // --- FORM KURALLARINI GÜNCELLEME (KAYNAKÇA ZORUNLULUĞU) ---
+    function updateFormRules() {
       const type = document.getElementById('post-type').value;
-      const warning = document.getElementById('makale-warning');
-      const audioArea = document.getElementById('audio-input-area');
+      const audioField = document.getElementById('audio-field');
+      const citationBadge = document.getElementById('citation-badge');
+      const citationHelper = document.getElementById('citation-helper');
 
       if (type === 'podcast') {
-        audioArea.classList.remove('hidden');
+        audioField.classList.remove('hidden');
       } else {
-        audioArea.classList.add('hidden');
+        audioField.classList.add('hidden');
       }
 
-      if (type === 'makale') {
-        if (!currentUser || !canPublishArticle(currentUser.role)) {
-          warning.classList.remove('hidden');
-        } else {
-          warning.classList.add('hidden');
-        }
+      const userRole = currentUser ? currentUser.role : 'Üye';
+      const immune = isAcademicImmune(userRole);
+
+      if (immune) {
+        citationBadge.className = 'text-[10px] px-2 py-0.5 rounded font-bold bg-slate-800 text-slate-400';
+        citationBadge.innerText = 'İsteğe Bağlı (Doç/Prof)';
+        citationHelper.innerText = 'Profesör ve Doçent unvanına sahip olduğunuz için kaynak girmeden de yayımlayabilirsiniz.';
       } else {
-        warning.classList.add('hidden');
+        citationBadge.className = 'text-[10px] px-2 py-0.5 rounded font-bold bg-red-500/20 text-red-400 border border-red-500/30';
+        citationBadge.innerText = 'ZORUNLU (Kaynak Girmelisiniz)';
+        citationHelper.innerText = 'Bilimin Mirası kuralları gereği Profesör veya Doçent olmayan tüm yazarlar makalelerinde bilimsel kaynak ve literatür belirtmek zorundadır.';
       }
     }
 
-    function handlePublish() {
+    // --- İÇERİK YAYINLAMA ---
+    function publishArticle() {
       if (!currentUser) {
-        alert('Paylaşım yapabilmek için lütfen önce giriş yapın.');
+        alert('İçerik paylaşabilmek için lütfen önce giriş yapın.');
         openAuthModal();
         return;
       }
 
       let type = document.getElementById('post-type').value;
       const title = document.getElementById('post-title').value.trim();
+      const coAuthors = document.getElementById('post-coauthors').value.trim();
       const content = document.getElementById('post-content').value.trim();
+      const citations = document.getElementById('post-citations').value.trim();
       const audioUrl = document.getElementById('post-audio-url').value.trim();
 
       if (!title || !content) {
@@ -597,67 +440,345 @@
         return;
       }
 
-      // Makale Kısıtlama Denetimi:
+      // Kural 1: Makale yetkisi kontrolü
       if (type === 'makale' && !canPublishArticle(currentUser.role)) {
-        alert(`Rütbeniz (${currentUser.role}) doğrudan Makale yayınlamaya yetkili değil. Yazınız Blog kategorisine alındı.`);
+        alert(`Yetkiniz (${currentUser.role}) doğrudan Makale yayınlamak için yeterli değildir. Yazınız otomatik olarak 'Blog' statüsüne geçirildi.`);
         type = 'blog';
       }
+
+      // Kural 2: Kaynakça zorunluluğu (Doçent ve Prof değilse şart)
+      if (!isAcademicImmune(currentUser.role) && !citations) {
+        alert('DİKKAT: Profesör veya Doçent olmadığınız için bu yazıda bilimsel kaynak / referans belirtmek ZORUNDASINIZ!');
+        document.getElementById('post-citations').focus();
+        return;
+      }
+
+      // Fotoğraf kontrolü (yüklenmediyse doğa/uzay fotoğrafı ata)
+      const finalImage = uploadedImageBase64 || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80';
 
       const newPost = {
         id: Date.now().toString(),
         title,
         type,
-        author: currentUser.username,
+        author: currentUser.name || currentUser.username,
+        coAuthors,
         role: currentUser.role,
+        image: finalImage,
         content,
+        citations: citations || 'Belirtilmedi (Akademik Muafiyet)',
         audioUrl: audioUrl || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-        date: 'Şimdi',
-        likes: 0
+        date: 'Yeni eklendi',
+        likes: 1
       };
 
       posts.unshift(newPost);
-      saveData();
+      saveState();
       closeModal('publish-modal');
-      render();
+      
+      // Formu Sıfırla
+      document.getElementById('post-title').value = '';
+      document.getElementById('post-coauthors').value = '';
+      document.getElementById('post-content').value = '';
+      document.getElementById('post-citations').value = '';
+      uploadedImageBase64 = null;
+      document.getElementById('image-preview-container').classList.add('hidden');
+      document.getElementById('image-filename').innerText = 'Fotoğraf seçilmedi';
+
+      renderFeed();
+      alert('İçeriğiniz başarıyla Bilimin Mirası kütüphanesine eklendi!');
     }
 
-    // Modal Yardımcıları
+    // --- AKIŞI EKRANA ÇİZME (RENDER) ---
+    function renderFeed() {
+      const grid = document.getElementById('posts-grid');
+      const search = document.getElementById('searchInput').value.toLowerCase();
+
+      let filtered = posts.filter(p => {
+        const matchesType = (activeFilter === 'all') || (p.type === activeFilter);
+        const matchesSearch = p.title.toLowerCase().includes(search) || 
+                              p.author.toLowerCase().includes(search) || 
+                              (p.coAuthors && p.coAuthors.toLowerCase().includes(search)) ||
+                              p.content.toLowerCase().includes(search);
+        return matchesType && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-20 text-center text-slate-500">
+            <i data-lucide="book-x" class="w-12 h-12 mx-auto mb-3 opacity-40"></i>
+            <p class="text-sm font-medium">Bu kriterlere uygun bir içerik bulunamadı.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        let badgeBg = 'bg-blue-500/10 text-blue-400 border-blue-500/30';
+        let typeName = 'Bilimsel Makale';
+        if (item.type === 'blog') { badgeBg = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'; typeName = 'Blog İncelemesi'; }
+        if (item.type === 'soru') { badgeBg = 'bg-amber-500/10 text-amber-400 border-amber-500/30'; typeName = 'Soru & Tartışma'; }
+        if (item.type === 'podcast') { badgeBg = 'bg-purple-500/10 text-purple-400 border-purple-500/30'; typeName = 'Podcast (Ses)'; }
+
+        return `
+          <article class="bg-panelDark border border-borderDark rounded-2xl overflow-hidden hover:border-amber-500/50 transition duration-300 flex flex-col justify-between group shadow-lg">
+            <div>
+              <!-- Görsel -->
+              <div class="relative h-44 w-full overflow-hidden bg-slate-900">
+                <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                <span class="absolute top-3 left-3 text-[10px] font-bold tracking-wide uppercase px-2.5 py-1 rounded-full border backdrop-blur-md ${badgeBg}">
+                  ${typeName}
+                </span>
+              </div>
+
+              <!-- İçerik -->
+              <div class="p-5 space-y-3">
+                <h3 class="font-bold text-base text-white group-hover:text-amber-300 transition line-clamp-2 leading-snug">${item.title}</h3>
+                <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed">${item.content}</p>
+
+                <!-- Podcast Oynatıcısı -->
+                ${item.type === 'podcast' ? `
+                  <div class="p-3 bg-cardDark rounded-xl border border-borderDark space-y-1.5">
+                    <div class="flex items-center gap-2 text-xs font-bold text-amber-400">
+                      <i data-lucide="volume-2" class="w-4 h-4"></i> Kaydı Dinle
+                    </div>
+                    <audio controls class="w-full h-8" style="filter: invert(0.9) hue-rotate(180deg);">
+                      <source src="${item.audioUrl}" type="audio/mpeg">
+                    </audio>
+                  </div>
+                ` : ''}
+
+                <!-- Kaynakça Kutucuğu -->
+                <div class="p-2.5 bg-cardDark/70 border border-borderDark/80 rounded-xl text-[11px] space-y-1">
+                  <span class="font-bold text-amber-400 flex items-center gap-1">
+                    <i data-lucide="bookmark" class="w-3 h-3"></i> Kaynakça / Referans:
+                  </span>
+                  <p class="text-slate-400 italic line-clamp-2 font-mono text-[10px]">${item.citations}</p>
+                </div>
+
+                <!-- Ortak Yazarlar -->
+                ${item.coAuthors ? `
+                  <div class="text-[11px] text-slate-400">
+                    <span class="text-amber-400 font-semibold">Ortak Yazarlar:</span> ${item.coAuthors}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- Kart Altı / Yazar Bilgisi -->
+            <div class="px-5 py-3.5 bg-cardDark border-t border-borderDark flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center font-bold text-xs">
+                  ${item.author.substring(0,1)}
+                </div>
+                <div>
+                  <p class="font-bold text-slate-200 leading-none">${item.author}</p>
+                  <p class="text-[10px] text-amber-400 font-semibold mt-0.5">${item.role}</p>
+                </div>
+              </div>
+
+              <button onclick="likePost('${item.id}')" class="flex items-center gap-1.5 text-slate-400 hover:text-red-400 transition">
+                <i data-lucide="heart" class="w-3.5 h-3.5"></i>
+                <span class="text-[11px] font-bold">${item.likes}</span>
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // --- YÖNETİCİ PANELİ KODLARI (MERT) ---
+    function renderAdminPanel() {
+      const tbody = document.getElementById('user-admin-list');
+      tbody.innerHTML = users.map(u => {
+        const canArticle = canPublishArticle(u.role);
+        const immune = isAcademicImmune(u.role);
+        return `
+          <tr class="hover:bg-cardDark/50">
+            <td class="p-3 font-semibold text-white">${u.name || u.username} <span class="text-slate-500 text-[10px]">(@${u.username})</span></td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded bg-slate-800 text-[11px] text-amber-300 font-semibold">${u.role}</span></td>
+            <td class="p-3">
+              <select onchange="changeUserRole('${u.id}', this.value)" class="bg-brandDark border border-borderDark rounded-lg px-2.5 py-1 text-xs text-slate-200">
+                <option value="Üye" ${u.role === 'Üye' ? 'selected' : ''}>Üye</option>
+                <option value="Blog Yazarı" ${u.role === 'Blog Yazarı' ? 'selected' : ''}>Blog Yazarı</option>
+                <option value="Bilim İnsanı" ${u.role === 'Bilim İnsanı' ? 'selected' : ''}>Bilim İnsanı</option>
+                <option value="Doçent" ${u.role === 'Doçent' ? 'selected' : ''}>Doçent</option>
+                <option value="Profesör" ${u.role === 'Profesör' ? 'selected' : ''}>Profesör</option>
+                <option value="Yönetici" ${u.role === 'Yönetici' ? 'selected' : ''}>Yönetici</option>
+              </select>
+            </td>
+            <td class="p-3 font-bold ${canArticle ? 'text-emerald-400' : 'text-slate-500'}">
+              ${canArticle ? '✓ Makale İzni Var' : '✗ Sadece Blog'}
+            </td>
+            <td class="p-3 font-bold ${immune ? 'text-slate-400' : 'text-amber-400'}">
+              ${immune ? 'Muaf (Zorunlu Değil)' : '⚠️ Kaynak Zorunlu'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function changeUserRole(userId, newRole) {
+      if (!currentUser || currentUser.username !== 'Mert') {
+        alert('Bu yetkilendirmeyi yalnızca Yönetici Mert gerçekleştirebilir!');
+        return;
+      }
+      const u = users.find(x => x.id === userId);
+      if (u) {
+        u.role = newRole;
+        saveState();
+        renderAdminPanel();
+        renderFeed();
+      }
+    }
+
+    // --- KULLANICI / GİRİŞ YÖNETİMİ ---
+    function renderUserArea() {
+      const userBox = document.getElementById('sidebar-user-box');
+      const headerLoginBtn = document.getElementById('header-login-btn');
+      const adminIndicator = document.getElementById('admin-indicator');
+      const adminPanel = document.getElementById('admin-panel');
+
+      if (currentUser) {
+        headerLoginBtn.classList.add('hidden');
+        if (currentUser.username === 'Mert') {
+          adminIndicator.classList.remove('hidden');
+          adminPanel.classList.remove('hidden');
+          renderAdminPanel();
+        } else {
+          adminIndicator.classList.add('hidden');
+          adminPanel.classList.add('hidden');
+        }
+
+        userBox.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 to-blue-600 flex items-center justify-center font-bold text-white text-xs shadow-md">
+                ${currentUser.username.substring(0,2).toUpperCase()}
+              </div>
+              <div>
+                <p class="text-xs font-bold text-white">${currentUser.name || currentUser.username}</p>
+                <p class="text-[10px] text-amber-400 font-semibold">${currentUser.role}</p>
+              </div>
+            </div>
+            <button onclick="handleLogout()" title="Çıkış Yap" class="text-slate-400 hover:text-red-400 transition p-1">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+      } else {
+        headerLoginBtn.classList.remove('hidden');
+        adminIndicator.classList.add('hidden');
+        adminPanel.classList.add('hidden');
+        userBox.innerHTML = `
+          <button onclick="openAuthModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-amber-500/10">
+            <i data-lucide="log-in" class="w-4 h-4"></i> Giriş Yap
+          </button>
+        `;
+      }
+      lucide.createIcons();
+    }
+
+    function handleLogin() {
+      const uVal = document.getElementById('login-username').value.trim();
+      const pVal = document.getElementById('login-password').value.trim();
+      const err = document.getElementById('login-error');
+
+      if (!uVal) return;
+
+      if (uVal.toLowerCase() === 'mert') {
+        if (pVal !== '2626mert') {
+          err.innerText = 'Yönetici şifresi hatalı!';
+          err.classList.remove('hidden');
+          return;
+        }
+        currentUser = { id: 'mert_admin', name: 'Mert Canipek', username: 'Mert', role: 'Yönetici' };
+      } else {
+        let existing = users.find(u => u.username.toLowerCase() === uVal.toLowerCase() || (u.name && u.name.toLowerCase() === uVal.toLowerCase()));
+        if (!existing) {
+          existing = { id: Date.now().toString(), name: uVal, username: uVal.toLowerCase().replace(/\s+/g, '_'), role: 'Üye' };
+          users.push(existing);
+        }
+        currentUser = existing;
+      }
+
+      err.classList.add('hidden');
+      closeModal('login-modal');
+      saveState();
+      renderUserArea();
+      renderFeed();
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      saveState();
+      renderUserArea();
+      renderFeed();
+    }
+
+    function filterContent(type) {
+      activeFilter = type;
+      const headers = {
+        'all': { t: 'Genel Akış & Bilim Kütüphanesi', d: 'Tüm onaylı makaleler, bloglar, tartışmalar ve podcastler' },
+        'makale': { t: 'Bilimsel Makaleler & İncelemeler', d: 'Doçent, Profesör ve Bilim İnsanlarının hakemli ve kaynaklı makaleleri' },
+        'blog': { t: 'Topluluk Bilim Blogları', d: 'Bilim yazarları ve üyelerin kaleme aldığı serbest yazılar' },
+        'soru': { t: 'Soru & Cevap / Bilimsel Münazara', d: 'Merak edilen sorular ve uzmanlardan yanıtlar' },
+        'podcast': { t: 'Bilimin Mirası Podcast Yayınları', d: 'Sesli makaleler, tartışmalar ve ses kayıtları' }
+      };
+      document.getElementById('feed-title').innerText = headers[type].t;
+      document.getElementById('feed-desc').innerText = headers[type].d;
+      renderFeed();
+    }
+
+    function likePost(id) {
+      const p = posts.find(x => x.id === id);
+      if (p) {
+        p.likes += 1;
+        saveState();
+        renderFeed();
+      }
+    }
+
+    // Modal Fonksiyonları
     function openAuthModal() { document.getElementById('login-modal').classList.remove('hidden'); document.getElementById('login-modal').classList.add('flex'); }
     function openPublishModal() { 
       document.getElementById('publish-modal').classList.remove('hidden'); 
-      document.getElementById('publish-modal').classList.add('flex'); 
-      checkPublishPermissions();
+      document.getElementById('publish-modal').classList.add('flex');
+      updateFormRules();
     }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
 
-    // --- PWA SERVICE WORKER & KURULUM ---
+    // --- PWA KURULUMU (İNDİRİLEBİLİR UYGULAMA) ---
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js');
     }
 
-    let deferredPrompt;
+    let installPromptEvent;
     const installBtn = document.getElementById('pwa-install-btn');
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
-      deferredPrompt = e;
+      installPromptEvent = e;
       installBtn.classList.remove('hidden');
       installBtn.classList.add('flex');
     });
 
     installBtn.addEventListener('click', async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
+      if (installPromptEvent) {
+        installPromptEvent.prompt();
+        const { outcome } = await installPromptEvent.userChoice;
         if (outcome === 'accepted') {
           installBtn.classList.add('hidden');
         }
-        deferredPrompt = null;
+        installPromptEvent = null;
       }
     });
 
-    // Başlangıç Çalıştırması
-    render();
+    // Başlatıcı
+    renderUserArea();
+    renderFeed();
   </script>
 </body>
 </html>
