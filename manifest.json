@@ -1,10 +1,12 @@
 {
-  "name": "Sentez Bilim - Bilim Topluluğu",
-  "short_name": "Sentez Bilim",
+  "name": "Bilimin Mirası",
+  "short_name": "BiliminMirası",
+  "description": "Geçmişten Geleceğe Bilim, Makale, Soru-Cevap ve Podcast Platformu",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#070b14",
-  "theme_color": "#070b14",
+  "background_color": "#060913",
+  "theme_color": "#060913",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3253/3253965.png",
