@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bilimin-mirasi-v1';
+const CACHE_NAME = 'bilimin-mirasi-v2'; // Versiyonu v2 yaptık
 const ASSETS = [
   './',
   './index.html',
@@ -6,9 +6,25 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
+  self.skipWaiting(); // Eski önbelleği anında devreden çıkarır
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key); // Eski sürümleri siler
+          }
+        })
+      );
+    })
+  );
+  return self.clients.claim();
 });
 
 self.addEventListener('fetch', (e) => {
