@@ -1,15 +1,18 @@
-self.addEventListener("install", (e) => {
+const CACHE_NAME = 'bilimin-mirasi-v1';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json'
+];
+
+self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open("noron-cache-v1").then((cache) => {
-      return cache.addAll(["./", "./index.html", "./manifest.json"]);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
 });
 
-self.addEventListener("fetch", (e) => {
+self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((res) => {
-      return res || fetch(e.request);
-    })
+    caches.match(e.request).then((res) => res || fetch(e.request))
   );
 });
